@@ -1,0 +1,93 @@
+$colors: (
+  header-color: #00ab92,
+  secondary-color: #a1a1a1,
+  note: #d8f2ee,
+  footer-color: #f5f5f5
+);
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+// font-family: 'Montserrat', sans-serif;
+// font-weight: 400, 700;
+
+@font-face {
+  font-family: HelveticaBold;
+  src: url(../fonts/Helvetica-Bold.ttf);
+}
+
+@font-face {
+  font-family: HelveticaReg;
+  src: url(../fonts/Helvetica.ttf);
+}
+
+@function color($c) {
+  @return map-get($colors, $c);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: HelveticaReg;
+  &:focus {
+    outline: none;
+  }
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgb(154, 154, 154);
+    border: none;
+  }
+}
+
+.bodyClone {
+  position: relative;
+  width: 100%;
+  overflow-x: hidden;
+  height: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main.cont {
+  max-width: 1110px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+.mr-a {
+  margin-right: auto;
+}
+
+.note {
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  background: color(note);
+  a.noteLink {
+    font-weight: 400;
+    color: color(header-color);
+  }
+}
+
+@import "./header";
+@import "./cnp";
+@import "./footer";
+@import "./login";
+@import "./blp";
+@import "./plp";

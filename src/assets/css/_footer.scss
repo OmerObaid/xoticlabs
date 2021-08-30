@@ -1,0 +1,38 @@
+footer {
+  background: color(footer-color);
+
+  .cont {
+    height: 10rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  img {
+    flex: 0 1 20rem;
+    object-fit: contain;
+    object-position: left;
+    height: auto;
+    width: 80vw;
+    max-width: 15rem;
+  }
+
+  p {
+    text-align: right;
+    flex: 1 1 20rem;
+  }
+}
+
+@media (max-width: 671px) {
+  footer {
+    padding: 2rem 0;
+    img {
+      margin: 0 auto;
+      object-position: center;
+    }
+    p {
+      text-align: center;
+    }
+  }
+}
