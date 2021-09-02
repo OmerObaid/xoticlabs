@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { API_PASSWORD, API_USERNAME, CLIENT_LOGIN } from "./axiousURL";
+import { CLIENT_LOGIN } from "./axiousURL";
 import axios from "./axiosConfig";
 import { FormDataHelper } from "../_helpers/FormDataHelper";
 

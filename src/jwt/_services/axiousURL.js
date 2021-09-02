@@ -3,6 +3,7 @@ export const CLIENT_LOGIN = 'client_login';
 
 //BRANDS URL
 export const BRANDS_LISTING = 'list_brands';
+export const BRAND_DELETE = 'delete_brand';
 
 // API CONSTANTS
 export const API_USERNAME = "43541965248c40cb5adb1761b8302dc5e1107b23";

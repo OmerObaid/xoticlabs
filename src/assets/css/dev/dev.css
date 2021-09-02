@@ -49,3 +49,15 @@ header .dropList li:hover {
 header .dropList {
     width: 200px;
 }
+
+button.option {
+    padding: 0.3rem 0.3rem !important;
+}
+
+.cross:hover {
+    cursor: pointer !important;
+}
+
+.ck-editor__editable_inline {
+    min-height: 200px;
+}

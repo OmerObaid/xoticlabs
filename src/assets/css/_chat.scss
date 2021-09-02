@@ -1,0 +1,427 @@
+.chat {
+  padding: 65px 0 0;
+  main.cont {
+    width: 100%;
+    // background: #000;
+    height: calc(100vh - 225px);
+    overflow: auto;
+    padding-right: 0;
+    padding-left: 0;
+  }
+  .chatCont {
+    // background: pink;
+    max-width: 980px;
+    margin-left: auto;
+    height: calc(100vh - 225px);
+    main {
+      position: relative;
+      width: 100%;
+    }
+  }
+  .people,
+  .message {
+    position: absolute;
+    overflow: visible;
+    height: calc(100vh - 225px);
+  }
+
+  .people {
+    top: 0;
+    left: 0;
+    z-index: 2;
+    background: white;
+    width: 20rem;
+    padding-top: 1rem;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    .backText {
+      position: absolute;
+      right: 105%;
+      top: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: start;
+      img {
+        height: 1.1rem;
+      }
+      span {
+        font-size: 1.2rem;
+        color: color(secondary-color);
+      }
+    }
+    .rev {
+      background: #000;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 0.3rem;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      width: 100%;
+      padding: 0.5rem;
+      img {
+        margin-left: 0.5rem;
+        height: 1rem;
+        width: auto;
+      }
+    }
+    &_body {
+      border-left: 1px solid color(secondary-color);
+      border-bottom: 1px solid color(secondary-color);
+
+      overflow-y: auto;
+      &_head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1rem 0;
+        h2 {
+          font-size: 1.3rem;
+        }
+        button {
+          font-size: 0.8rem;
+          display: flex;
+          gap: 0.2rem;
+          justify-content: center;
+          align-items: center;
+          padding: 0.2rem 0.35rem;
+        }
+      }
+    }
+    img {
+      height: 1rem;
+    }
+    ul {
+      list-style: none;
+      text-align: center;
+      display: flex;
+      flex-wrap: wrap;
+      li {
+        padding: 0.5rem 1rem;
+        flex: 1 1 9rem;
+        border-top: 1px solid color(secondary-color);
+        border-bottom: 1px solid color(secondary-color);
+        &.active {
+          color: color(header-color);
+          border-bottom: 1px solid color(header-color) !important;
+        }
+      }
+    }
+  }
+  .markComp {
+    width: calc(100% - 2rem);
+    background: color(header-color);
+    margin: 1.5rem 1rem;
+    border: none;
+    font-family: HelveticaBold;
+    border-radius: 0.3rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  .showChat {
+    background: color(secondary-color);
+    display: none;
+  }
+  .inSider {
+    padding: 1rem;
+    h3 {
+      margin: 0 0 1rem;
+      font-size: 1.1rem;
+    }
+    &_details {
+      margin: 1rem 0;
+    }
+    h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      font-size: 0.9rem;
+      color: color(secondary-color);
+    }
+    &_brand,
+    &_attach_single {
+      margin-top: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.5rem;
+    }
+    &_attach {
+      margin: 1rem 0;
+    }
+  }
+  .message {
+    border: 1px solid color(secondary-color);
+    border-bottom: none;
+    padding: 0 0 5rem;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    right: 0;
+    width: calc(100% - 20rem);
+    background: white;
+
+    p {
+      color: color(secondary-color);
+    }
+
+    &_backButton {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% - 2rem);
+      height: auto;
+      padding: 0.5rem 0;
+      background: color(header-color);
+      margin: 0.5rem 1rem;
+      border: none;
+      border-radius: 9px;
+      color: white;
+      display: none;
+    }
+
+    &_main {
+      overflow-y: auto;
+    }
+
+    &_msgMake {
+      position: absolute;
+      // background: #000;
+      bottom: 0;
+      left: 0;
+      height: auto;
+      width: 100%;
+      justify-content: center !important;
+      align-items: center !important;
+      z-index: 1;
+
+      .sender {
+        margin-top: 0;
+      }
+
+      input {
+        background: transparent;
+        border: none;
+        flex: 1 1 auto;
+      }
+
+      .message_body {
+        padding: 0.7rem;
+        display: flex;
+        border-radius: 0.3rem;
+        background: color(footer-color);
+        .icons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 1rem;
+          flex: 0 1 auto;
+          img {
+            height: 1.3rem;
+          }
+        }
+      }
+    }
+
+    &_head {
+      display: flex;
+      margin-bottom: 0.8rem;
+      gap: 0.5rem;
+      align-items: baseline;
+    }
+
+    &_single {
+      padding: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
+    }
+
+    &_body {
+      flex: 1 1 19rem;
+      .msgPara {
+        padding: 0.5rem 1rem;
+      }
+    }
+  }
+  .sender {
+    margin-top: 2.3rem;
+    flex: 0 1 auto;
+    display: grid;
+    height: auto;
+    place-items: center;
+    &Name {
+      font-size: 1.3rem;
+    }
+    &Time {
+      font-size: 1rem;
+    }
+    img {
+      height: 3.5rem;
+      margin: 0 1rem;
+    }
+  }
+  .msgSTUFF {
+    width: 80%;
+    max-width: 23rem;
+    .actImage {
+      width: 100%;
+    }
+    &_imgBox {
+      width: 100%;
+      position: relative;
+    }
+
+    .viewbtn {
+      position: absolute;
+      padding: 0.5rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+      border-radius: 0.2rem;
+      color: color(secondary-color);
+      display: none;
+
+      img {
+        height: 1rem;
+      }
+
+      &Des {
+        background: white;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      &All {
+        top: 1rem;
+        right: 1rem;
+      }
+    }
+
+    &_overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      display: none;
+    }
+
+    &:hover {
+      .msgSTUFF_overlay {
+        display: block;
+      }
+      .viewbtn {
+        display: flex;
+      }
+    }
+
+    &_fileDetails {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    &_fileTitle {
+      background: color(note);
+    }
+    &_fileAction {
+      background: color(footer-color);
+      img {
+        height: 1.3rem;
+      }
+    }
+    .fileAction {
+      display: flex;
+      gap: 0.3rem;
+    }
+  }
+
+  .heSend {
+    .message_body .msgPara {
+      background: color(footer-color);
+    }
+  }
+
+  .iSend {
+    .message_body .msgPara {
+      color: black;
+      background: color(note);
+    }
+  }
+}
+
+@media (max-width: 1090px) {
+  .chat {
+    .people {
+      .backText {
+        position: static;
+        margin-left: 1rem;
+      }
+    }
+  }
+}
+@media (max-width: 770px) {
+  .chat {
+    .people {
+      width: 100%;
+      transition: transform 0.5s ease;
+      transform: translateX(0);
+      .showChat {
+        display: flex;
+      }
+      &.active {
+        transform: translateX(-120%);
+      }
+    }
+    .message {
+      padding: 3rem 0 5rem;
+
+      width: 100%;
+      &_backButton {
+        display: block;
+      }
+    }
+  }
+}
+@media (max-width: 671px) {
+  .chat {
+    main.cont {
+      min-height: calc(100vh - 289px);
+    }
+    .chatCont {
+      min-height: calc(100vh - 289px);
+    }
+  }
+}
+@media (max-width: 422px) {
+  .chat {
+    .sender {
+      img {
+        margin-left: 0;
+      }
+    }
+    .message_msgMake {
+      .sender {
+        display: none;
+      }
+    }
+  }
+}

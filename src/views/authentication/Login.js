@@ -2,17 +2,11 @@ import React from "react"
 import * as Yup from "yup";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
-import { BehaviorSubject } from "rxjs";
 
 import logoImage from "../../assets/images/xotic-logo.png";
 import bannerImage from "../../assets/images/login-Banner.png";
 import { PROJECT_NAME } from "../constants";
 import { AuthenticationService } from "../../jwt/_services";
-
-
-const currentUserSubject = new BehaviorSubject(
-    JSON.parse(localStorage.getItem("currentUser"))
-);
 
 const Login = (props) => {
     return <>
