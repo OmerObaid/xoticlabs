@@ -1,22 +1,65 @@
 import crossSignIcon from '../../assets/images/new-brand-icons/cross-sign.png'
 import uploadIcon from '../../assets/images/new-brand-icons/upload.png'
 import addNewColorIcon from '../../assets/images/new-brand-icons/add new color.png'
-import checkMarkIcon from '../../assets/images/new-brand-icons/affirmative-check-mark.png'
 
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import * as Yup from "yup";
+import ColorBox from '../colorBox';
+import { useState, useEffect } from 'react';
+import AttachmentGuidlines from './attachmentGuidlines';
 import { Formik, Field, Form, ErrorMessage } from "formik";
-import { GeneralServices } from '../../jwt/_services/General.services';
+import { AuthenticationService } from "../../jwt/_services";
 import { FormDataHelper } from '../../jwt/_helpers/FormDataHelper';
-import { logDOM } from '@testing-library/react';
-
+import { GeneralServices } from '../../jwt/_services/General.services';
+import { BRAND_ADD, INDUSTRIES_LISTING } from '../../jwt/_services/axiousURL';
+import HashLoadSpinner from '../hashLoadSpinner';
+import swal from 'sweetalert';
 
 const CreateNewBrand = ({ crossButtonCallBack }) => {
-    return <>
 
-        <div className="cnp createNew-overLay active">
+    const clientId = AuthenticationService.currentUserValue.id;
+
+    const [colors, setColors] = useState([]);
+    const [showColorBox, setShowColorBox] = useState(false);
+    const [sohwLogoFileSelected, setSohwLogoFileSelected] = useState(false);
+    const [showGuideFileSelected, setShowGuideFileSelected] = useState(false);
+    const [showAttachmentFileSelected, setShowAttachmentFileSelected] = useState(false);
+    const [attachmentCount, setAttachmentCount] = useState(0);
+    const [showLoading, setShowLoading] = useState(false);
+    const [industries, setIndustries] = useState([]);
+
+    const closeColorBoxCallBack = ({ color }) => {
+        setShowColorBox(false);
+        if (!color) return;
+        setColors([...colors, color.hex]);
+
+    }
+
+    const removeColor = (index) => {
+        colors.splice(index, 1);
+        setColors([...colors]);
+    }
+
+    const fetchIndustries = () => {
+        var helper = FormDataHelper();
+        GeneralServices.postRequest(helper, INDUSTRIES_LISTING).then(
+            (successResponse) => {
+                setIndustries(successResponse.data);
+            },
+            (errorResponse) => {
+                console.log('Failed to log industries');
+            }
+        );
+    }
+
+    useEffect(() => {
+        fetchIndustries();
+    }, [])
+
+    return <>
+        <div className="cnp createNew-overLay active">            
             <main>
                 <img onClick={crossButtonCallBack} src={crossSignIcon} alt="cross" className="cross" />
                 <h1 className="cnp-head">Create a brand</h1>
@@ -31,49 +74,82 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                     initialValues={{
                         brandName: '',
                         industry: '',
+                        description: '',
                         website: '',
-                        brandGuide: '',
-                        attachment: ''
                     }}
                     validationSchema={Yup.object().shape({
                         brandName: Yup.string().required("Brand name is required"),
-                        industry: Yup.string().required('Industry is required'),
-                        website: Yup.string(),
-                    })}
-                    onSubmit={(
-                        { brandName, industry, website, brandGuide, attachment },
-                        { setStatus, setSubmitting }
-                    ) => {
+                        industry: Yup.number().required('Industry is required'),
+                        description: Yup.string().min(1).max(150).required(),
 
-                        console.log(brandName, industry, website, brandGuide, attachment);
-                        return;
-                        setStatus();
+                    })}
+                    onSubmit={(values, actions) => {
+
+                        actions.setStatus();
                         var helper = FormDataHelper();
-                        GeneralServices.postRequest(helper, '').then(
+
+                        helper.append('client_id', clientId);
+                        helper.append('title', values.brandName);
+                        helper.append('industry_id', values.industry);
+                        helper.append('description', values.description);
+                        helper.append('website', values.website);
+                        helper.append('colors', JSON.stringify(colors));
+                        helper.append('logo', values.logo);
+                        helper.append('guidelines', values.guidelines);
+
+                        for (var imageFile of values.attachments) {
+                            helper.append('attachments[]', imageFile);
+                        }
+
+                        GeneralServices.postRequest(helper, BRAND_ADD).then(
                             (successResponse) => {
+                                // console.log(successResponse);
+                                // actions.setSubmitting(false);
+                                swal("Brand has been deleted!", {
+                                    icon: "success",
+                                });
+                                crossButtonCallBack();
                             },
                             (error) => {
-                                // console.log(error);
-                                setSubmitting(false);
-                                setStatus(error);
+                                console.log(error);
+                                actions.setSubmitting(false);
+                                actions.setStatus(error);
                             }
                         );
                     }}
+                >
 
-                    render={({ errors, status, touched, isSubmitting }) => (
+                    {({ errors, status, touched, isSubmitting, setFieldValue }) => (
 
-                        <Form action="">
+                        <Form>
                             <div className="inputField">
                                 <label className="inputLabel required" htmlFor="brandName">Brand name</label><br />
                                 <div className="inputDiv input">
-                                    <Field type="text" id="brandName" name="brandName" required />
+                                    <Field type="text" id="brandName" name="brandName" />
                                 </div>
+                                <ErrorMessage
+                                    name="brandName"
+                                    component="div"
+                                    className="invalid-feedback"
+                                />
                             </div>
                             <div className="inputField">
                                 <label className="inputLabel required" htmlFor="industry">Industry</label><br />
                                 <div className="inputDiv">
-                                    <Field type="text" name="industry" className="input" id="industry" required />
+                                    <Field as="select" className="input" id="industry" name="industry">
+                                        <option value="">Select a Industry</option>
+                                        {
+                                            industries.map((industry) => {
+                                                return <option key={industry.id} value={industry.id}>{industry.title}</option>
+                                            })
+                                        }
+                                    </Field>
                                 </div>
+                                <ErrorMessage
+                                    name="industry"
+                                    component="div"
+                                    className="invalid-feedback"
+                                />
                             </div>
 
                             <div className="inputField description">
@@ -83,7 +159,6 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                                     Tell us about this brand. What product/service does it provide? What’s special about
                                     it?
                                 </p>
-                                {/* <textarea name="desc" id="desc" required placeholder="Insert text here..."></textarea> */}
                                 <CKEditor
                                     editor={ClassicEditor}
                                     config={{
@@ -95,18 +170,31 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                                         console.log('Editor is ready to use!', editor);
                                     }}
                                     onChange={(event, editor) => {
-                                        const data = editor.getData();
-                                        console.log({ event, editor, data });
-                                    }}
-                                    onBlur={(event, editor) => {
-                                        console.log('Blur.', editor);
-                                    }}
-                                    onFocus={(event, editor) => {
-                                        console.log('Focus.', editor);
+                                        setFieldValue('description', editor.getData());
                                     }}
                                 />
 
+                                <ErrorMessage
+                                    name="description"
+                                    component="div"
+                                    className="invalid-feedback"
+                                />
                             </div>
+
+                            <div className="inputField">
+                                <h3 className="inputLabel brandGuide-head required">Brand Logo</h3>
+                                <p className="format-inst">Upload your brand logo.</p>
+                                <input type="file" name="logo" id="logo" hidden onChange={(event) => {
+                                    setFieldValue("logo", event.currentTarget.files[0]);
+                                    setSohwLogoFileSelected (true);
+                                }} accept="image/png, image/gif, image/jpeg" />
+                                <label htmlFor="logo">
+                                    <img src={uploadIcon} alt="upload" />
+                                    <span>Upload logo</span>                                     
+                                    { sohwLogoFileSelected && <span style={{ color: "#4ba893" }}> 1 file selected </span>}
+                                </label>                                
+                            </div>
+                                
                             <div className="inputField">
                                 <label className="inputLabel" htmlFor="website">Website</label><br />
                                 <div className="inputDiv">
@@ -116,87 +204,61 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                             <div className="inputField">
                                 <h3 className="inputLabel brandGuide-head">Brand guideline</h3>
                                 <p className="format-inst">Upload your existing brand guideline if you have one.</p>
-                                <Field type="file" name="brandGuide" id="brandGuide" hidden />
+                                <input type="file" name="guidelines" id="brandGuide" hidden onChange={(event) => {
+                                    setFieldValue("guidelines", event.currentTarget.files[0]);
+                                    setShowGuideFileSelected(true);
+                                }} />
                                 <label htmlFor="brandGuide">
                                     <img src={uploadIcon} alt="upload" />
                                     <span>Upload guideline</span>
+                                    {showGuideFileSelected && <span style={{ color: "#4ba893" }}> 1 file selected </span>}
                                 </label>
                             </div>
                             <div className="inputField">
                                 <h3 className="inputLabel">Brand Colors</h3>
                                 <div className="brandColors">
-                                    <div className="brandColors_single createColor">
+                                    <div onClick={() => setShowColorBox(!showColorBox)} className="brandColors_single createColor">
                                         <img src={addNewColorIcon} alt="add new color" />
                                     </div>
-                                    <div className="brandColors_single">
-                                        <div className="color white"></div>
-                                        <span className="hex">#fff</span>
-                                        <button className="remove">Remove</button>
-                                    </div>
-                                    <div className="brandColors_single">
-                                        <div className="color purple"></div>
-                                        <span className="hex">#8235dc</span>
-                                        <button className="remove">Remove</button>
-                                    </div>
+                                    {
+                                        colors.map((color, key) => {
+
+                                            const hStyle = { background: color };
+                                            return <div className="brandColors_single" key={key}>
+                                                <div className="color" style={hStyle}></div>
+                                                <span className="hex">{color}</span>
+                                                <button onClick={() => removeColor(key)} type="button" className="remove">Remove</button>
+                                            </div>
+                                        })
+                                    }
                                 </div>
                             </div>
+                            {showColorBox && <ColorBox closeCallBack={closeColorBoxCallBack} />}
                             <div className="inputField">
                                 <p className="inputLabel">Attachments</p>
-                                <div className="attach">
-                                    <ul className="attach-points">
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Your logos</p>
-                                        </li>
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Product images</p>
-                                        </li>
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Fonts</p>
-                                        </li>
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Icons</p>
-                                        </li>
-                                    </ul>
-                                    <ul className="attach-points">
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Any existing designs/graphics</p>
-                                        </li>
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Marketing marterials/ads</p>
-                                        </li>
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Preferred stock photos</p>
-                                        </li>
-                                        <li>
-                                            <img src={checkMarkIcon} alt="check mark" />
-                                            <p>Templates/PSD/AI files</p>
-                                        </li>
-                                    </ul>
-                                </div>
+                                <AttachmentGuidlines />
                                 <div className="attach-cont">
-                                    <Field type="file" name="attachment" id="atch" hidden />
+                                    <input type="file" name="attachments" id="atch" hidden onChange={(event) => {
+                                        setFieldValue("attachments", event.target.files);
+                                        setAttachmentCount(event.target.files.length);
+                                        setShowAttachmentFileSelected(true);
+                                    }} multiple />
                                     <label htmlFor="atch"><img src={uploadIcon} alt="upload icon" /> Upload files</label>
                                     <p>
                                         Upload or drag & drop any images, files, or examples that may be helpful
-                                        explaining your project here.
+                                        explaining your project here.                                                                                
+                                        {showAttachmentFileSelected && <span style={{ color: "#4ba893" }}> {`${attachmentCount} file(s) selected`} </span>}
                                     </p>
+                                    
                                 </div>
                             </div>
 
                             <button type="submit" className="createBrandBtn" disabled={isSubmitting}>Create brand</button>
                         </Form>
                     )}
-                />
+                </Formik>
             </main>
-        </div>
-
+        </div>        
     </>
 }
 

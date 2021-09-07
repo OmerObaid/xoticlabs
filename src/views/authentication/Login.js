@@ -36,8 +36,6 @@ const Login = (props) => {
                                         const { from } = props.location.state || {
                                             from: { pathname: "/" },
                                         };
-                                        console.log(props.location);
-                                        console.log(from);
                                         props.history.push(from);
 
                                     },

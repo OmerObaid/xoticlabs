@@ -14,7 +14,7 @@ import dummyProfileIcon from "../../../assets/images/header-icons/dummy-profile-
 import { Link } from "react-router-dom";
 import HeaderBrandListing from "../../../components/headerBrandListing";
 
-export default () => {
+export default (props) => {
 
 	const userName = AuthenticationService.currentUserValue.first_name + ' ' + AuthenticationService.currentUserValue.last_name;
 	const headerSettings = useSelector(state => state.headerSettings);
@@ -27,7 +27,6 @@ export default () => {
 		
 		return { brandName: brand.title, brandImage: '' }
 	}
-	// console.log(headerSettings);
 
 	return (
 		<>
@@ -42,7 +41,7 @@ export default () => {
 							<li className="headerBrandList" onClick={() => { setShowBrandList(!showBrandList); }} >
 								<h3>{getActiveBrand().brandName}</h3>
 								<img className="icon-img" src={downArrow} alt="down-arrow" />
-								{(showBrandList) && <HeaderBrandListing brands={headerSettings.brandList} />}
+								{(showBrandList) && <HeaderBrandListing brands={headerSettings.brandList} {...props} />}
 							</li>
 						}
 
@@ -53,10 +52,10 @@ export default () => {
 							</a>
 						</li>
 						<li className="mr-a">
-							<a href="#">
+							<Link to="/brands">
 								<img className="icon-img" src={brandsIcon} alt="brands" />
 								<span>Brands</span>
-							</a>
+							</Link>
 						</li>
 						<li><button>Outsourcer plan</button></li>
 						<li><img className="icon-img-bel" src={bellIcon} alt="bell icon" /></li>

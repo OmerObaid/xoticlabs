@@ -4,6 +4,7 @@ import { lazy } from "react";
 //Lazy loading and code splitting
 
 const Brands = lazy(() => import("../views/brands/BrandsListing"));
+const Brand = lazy(() => import("../views/brands/brand"));
 
 var ThemeRoutes = [  
   {
@@ -11,6 +12,12 @@ var ThemeRoutes = [
     name: "Brands",
     icon: "home",
     component: Brands,
+  },
+  {
+    path: "/brand/:id",
+    name: "Brands",
+    icon: "home",
+    component: Brand,
   },
   {
     path: "/",

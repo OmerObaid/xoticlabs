@@ -61,3 +61,17 @@ button.option {
 .ck-editor__editable_inline {
     min-height: 200px;
 }
+
+.brandsList-p {
+    font-style: italic;
+}
+
+.rcp {
+    /* width: 100% !important;
+    height: 100%; */
+    border-radius: 0 !important;
+}
+
+.filterProjects li:hover {
+    cursor: pointer;
+}

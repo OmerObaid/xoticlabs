@@ -20,7 +20,7 @@ import swal from 'sweetalert';
 import CreateNewBrand from "../../components/brand/createNewBrand";
 
 
-const BrandsListing = () => {
+const BrandsListing = (props) => {
 
     const clientId = AuthenticationService.currentUserValue.id;
     const [brands, setBrands] = useState([]);
@@ -47,7 +47,7 @@ const BrandsListing = () => {
     };
 
     const getTitle = (title) => {
-        var length = 7;
+        var length = 5;
         if (title == null) return "";
         if (title.length <= length) return title;
 
@@ -55,7 +55,7 @@ const BrandsListing = () => {
         return title + " ...";
     }
 
-    const closeCreateNewBrandOverlay = () =>{
+    const closeCreateNewBrandOverlay = () => {
         setShowCreateNewBrand(false);
     }
 
@@ -75,7 +75,7 @@ const BrandsListing = () => {
                     helper.append('brand_id', brandId);
                     GeneralServices.postRequest(helper, BRAND_DELETE).then(
                         (successResponse) => {
-                            swal("Brand has been deleted!", {
+                            swal("Brand added successfully!", {
                                 icon: "success",
                             });
                             fetchBrands();
@@ -88,6 +88,14 @@ const BrandsListing = () => {
                     console.log('User oppted to not delete the brand');
                 }
             });
+    }
+
+    const handleBrandClicked = (brandId) => {
+        const { from } = props.location.state || {
+            from: { pathname: `/brand/${brandId}` },
+        };
+        console.log(from);
+        props.history.push(from);        
     }
 
     return <>
@@ -107,7 +115,7 @@ const BrandsListing = () => {
                             brands.map((brand, key) => {
                                 return <div className="brandsList_single" key={key}>
                                     <div className="brandsList_head">
-                                        <div className="brandsList_left">
+                                        <div onClick={() => handleBrandClicked(brand.brand_id)} className="brandsList_left">
                                             <img src={brand.brand_id == headerSettings.activeBrandId ? activeBrandFolderIcon : brandFolderIcon} alt="brand-icon" />
                                             <h3>{getTitle(brand.title)}</h3>
                                         </div>

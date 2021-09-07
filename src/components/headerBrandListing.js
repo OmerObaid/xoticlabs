@@ -4,11 +4,17 @@ import { Link } from "react-router-dom";
 import { setActiveBrandId } from "../redux/headerSettings/Action";
 
 
-const HeaderBrandListing = ({ brands }) => {
+const HeaderBrandListing = ({brands, ...props}) => {
 
     const dispatch = useDispatch();
     const setActiveBrand = (brandId) => {
         dispatch(setActiveBrandId(brandId));
+
+        const { from } = {
+            from: { pathname: `/brand/${brandId}` },
+        };
+        
+        props.history.push(from);
     }
 
     return (
