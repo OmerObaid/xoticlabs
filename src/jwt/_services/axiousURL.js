@@ -11,6 +11,7 @@ export const INDUSTRIES_LISTING = 'list_industries';
 
 //PROJECTS URL
 export const PROJECT_LISTING = 'list_projects';
+export const PROJECT_STATUS_UPDATE = 'update_status_project';
 
 // API CONSTANTS
 export const API_USERNAME = "43541965248c40cb5adb1761b8302dc5e1107b23";

@@ -14,16 +14,19 @@ const Brand = () => {
         setShowActiveProjects(true);
         setShowCompletedProjects(false);
         setShowDraftsProjects(false);
+        setSearchText('');
     }
     const handleCompletedProjectsClick = () => {
         setShowActiveProjects(false);
         setShowCompletedProjects(true);
         setShowDraftsProjects(false);
+        setSearchText('');
     }
     const handleDraftsProjectsClick = () => {
         setShowActiveProjects(false);
         setShowCompletedProjects(false);
         setShowDraftsProjects(true);
+        setSearchText('');
     }
 
     return (
@@ -44,7 +47,7 @@ const Brand = () => {
                         <button>+ New project</button>
                     </div>
                     {showActiveProjects && <ActiveProjects filterText={searchText} />}
-                    {showCompletedProjects && <CompletedProjects />}
+                    {showCompletedProjects && <CompletedProjects filterText={searchText} />}
 
                 </main>
             </section>

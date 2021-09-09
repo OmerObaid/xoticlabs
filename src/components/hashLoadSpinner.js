@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
 import HashLoader from "react-spinners/HashLoader";
 
 const override = css`

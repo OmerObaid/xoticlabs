@@ -72,6 +72,10 @@ button.option {
     border-radius: 0 !important;
 }
 
-.filterProjects li:hover {
+.brandsList_left, .filterProjects li:hover {
     cursor: pointer;
 }
+
+/* .brandsList_left:hover {
+    cursor: pointer;
+} */

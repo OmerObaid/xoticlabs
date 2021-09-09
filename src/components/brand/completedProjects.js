@@ -1,165 +1,104 @@
+import checkCircle from "../../assets/images/check circle white.png";
+import smileIcon from "../../assets/images/smile.png";
+import activeWorkIcon from "../../assets/images/brand-page-icons/active work image.png";
+
 import { useState, useEffect } from "react";
-import { useParams } from 'react-router';
+import { useParams } from "react-router";
+import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
+import { PROJECT_LISTING } from "../../jwt/_services/axiousURL";
+import { GeneralServices } from "../../jwt/_services/General.services";
 
-const CompletedProjects = () => {
+const CompletedProjects = ({ filterText, ...props }) => {
+  const { id } = useParams();
 
-    const { id } = useParams();
+  const [completedProjects, setCompletedProjects] = useState([]);
+  const [allCompletedProjects, setAllCompletedProjects] = useState([]);
 
-    const [completedProjects, setCompletedProjects] = useState([]);
-    const [allCompletedProjects, setAllCompletedProjects] = useState([]);
+  const fetchCompletedProjects = () => {
+    var helper = FormDataHelper();
+    helper.append("brand_id", id);
+    helper.append("status", "Y");
 
-    const fetchCompletedProjects = () => {
+    GeneralServices.postRequest(helper, PROJECT_LISTING).then(
+      (successResponse) => {
+        const projects = successResponse.data;
+        setCompletedProjects(projects);
+        setAllCompletedProjects(projects);
+      },
+      (errorResponse) => {
+        setCompletedProjects([]);
+        setAllCompletedProjects([]);
+      }
+    );
+  };
 
+  useEffect(() => {
+    fetchCompletedProjects();
+  }, [id]);
+
+  useEffect(() => {
+    if (filterText === "") {
+      setCompletedProjects(allCompletedProjects);
     }
 
-    useEffect(() => {
-        fetchCompletedProjects();
-    }, [id]);
+    setCompletedProjects(
+      allCompletedProjects.filter((project) => {
+        return project.title.includes(filterText);
+      })
+    );
+  }, [filterText]);
 
-    return (
-        <>
-            <div className="brandsBody productsBodyComplete">
-                <div className="productList">
-                    <div className="productList_single">
-                        <div className="head">
-                            <img className="productList_image" src="./images/active work image.png" alt="" />
-                            <div className="productList_details">
-                                <div className="heading">
-                                    <h2>Infographic</h2>
-                                    <div className="inProg">
-                                        <span>Completed</span> <img src="./images/check circle white.png" alt="" />
-                                    </div>
-                                </div>
-                            </div>
-                            <button className="smile">
-                                <img src="./images/smile.png" alt="" />
-                            </button>
-                        </div>
-                        <div className="foot">
-                            <div className="foot_single">
-                                <h3>Created</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Started</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Completed</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Design Recieved</h3>
-                                <p>0</p>
-                            </div>
-                        </div>
+  return (
+    <>
+      <div className="brandsBody productsBodyComplete">
+        <div className="productList">
+          {completedProjects.map((project) => {
+            return (
+              <div className="productList_single" key={project.project_id}>
+                <div className="head">
+                  <img
+                    className="productList_image"
+                    // src={activeWorkIcon}
+                    src={project.project_logo}
+                    alt=""
+                  />
+                  <div className="productList_details">
+                    <div className="heading">
+                      <h2>{project.title}</h2>
+                      <div className="inProg">
+                        <span>Completed</span> <img src={checkCircle} alt="" />
+                      </div>
                     </div>
-                    <div className="productList_single">
-                        <div className="head">
-                            <img className="productList_image" src="./images/active work image.png" alt="" />
-                            <div className="productList_details">
-                                <div className="heading">
-                                    <h2>Xotic Labs logo</h2>
-                                    <div className="inProg">
-                                        <span>Completed</span> <img src="./images/check circle white.png" alt="" />
-                                    </div>
-                                </div>
-                            </div>
-                            <button className="smile">
-                                <img src="./images/smile.png" alt="" />
-                            </button>
-                        </div>
-                        <div className="foot">
-                            <div className="foot_single">
-                                <h3>Created</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Started</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Completed</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Design Recieved</h3>
-                                <p>0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="productList_single">
-                        <div className="head">
-                            <img className="productList_image" src="./images/active work image.png" alt="" />
-                            <div className="productList_details">
-                                <div className="heading">
-                                    <h2>Project Web App</h2>
-                                    <div className="inProg">
-                                        <span>Completed</span> <img src="./images/check circle white.png" alt="" />
-                                    </div>
-                                </div>
-                            </div>
-                            <button className="smile">
-                                <img src="./images/smile.png" alt="" />
-                            </button>
-                        </div>
-                        <div className="foot">
-                            <div className="foot_single">
-                                <h3>Created</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Started</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Completed</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Design Recieved</h3>
-                                <p>0</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="productList_single">
-                        <div className="head">
-                            <img className="productList_image" src="./images/active work image.png" alt="" />
-                            <div className="productList_details">
-                                <div className="heading">
-                                    <h2>Illustration</h2>
-                                    <div className="inProg">
-                                        <span>Completed</span> <img src="./images/check circle white.png" alt="" />
-                                    </div>
-                                </div>
-                            </div>
-                            <button className="smile">
-                                <img src="./images/smile.png" alt="" />
-                            </button>
-                        </div>
-                        <div className="foot">
-                            <div className="foot_single">
-                                <h3>Created</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Started</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Completed</h3>
-                                <p>June 29, 2020</p>
-                            </div>
-                            <div className="foot_single">
-                                <h3>Design Recieved</h3>
-                                <p>0</p>
-                            </div>
-                        </div>
-                    </div>
+                  </div>
+                  <button className="smile">
+                    <img src={smileIcon} alt="" />
+                  </button>
                 </div>
-            </div>
-        </>
-    )
-}
+                <div className="foot">
+                  <div className="foot_single">
+                    <h3>Created</h3>
+                    <p>{project.created_datetime}</p>
+                  </div>
+                  <div className="foot_single">
+                    <h3>Started</h3>
+                    <p>{project.start_date}</p>
+                  </div>
+                  <div className="foot_single">
+                    <h3>Completed</h3>
+                    <p>{project.completion_date}</p>
+                  </div>
+                  <div className="foot_single">
+                    <h3>Design Recieved</h3>
+                    <p>{project.design_received}</p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </>
+  );
+};
 
-export default CompletedProjects
+export default CompletedProjects;
