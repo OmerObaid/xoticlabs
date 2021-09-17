@@ -76,6 +76,10 @@ button.option {
     cursor: pointer;
 }
 
-/* .brandsList_left:hover {
+.disabled-buttons:hover {
+    cursor: not-allowed;
+}
+
+.deliverables_single:hover, .assocBrands_single:hover, .backText:hover {
     cursor: pointer;
-} */
+}

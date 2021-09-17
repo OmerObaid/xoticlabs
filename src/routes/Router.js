@@ -5,8 +5,9 @@ import { lazy } from "react";
 
 const Brands = lazy(() => import("../views/brands/BrandsListing"));
 const Brand = lazy(() => import("../views/brands/brand"));
+const CreateProject = lazy(() => import("../views/project/createProject"));
 
-var ThemeRoutes = [  
+var ThemeRoutes = [
   {
     path: "/brands",
     name: "Brands",
@@ -18,6 +19,12 @@ var ThemeRoutes = [
     name: "Brands",
     icon: "home",
     component: Brand,
+  },
+  {
+    path: "/createProject",
+    name: "project",
+    icon: "home",
+    component: CreateProject,
   },
   {
     path: "/",

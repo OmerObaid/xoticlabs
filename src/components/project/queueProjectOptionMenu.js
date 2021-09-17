@@ -22,7 +22,7 @@ const QueueProjectOptionMenu = ({
           <img src={checkCircle} alt="" />
           Mark as complete
         </li>
-        <li>
+        <li className="disabled-buttons">
           <img src={duplicateProjectIcon} alt="" />
           Duplicate project
         </li>
@@ -30,7 +30,7 @@ const QueueProjectOptionMenu = ({
           <img src={moveToActiveIcon} alt="" />
           Move to active
         </li>
-        <li>
+        <li className="disabled-buttons">
           <img src={editIcon} alt="" />
           Edit project
         </li>

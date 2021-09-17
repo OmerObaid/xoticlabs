@@ -143,7 +143,7 @@ const BrandsListing = (props) => {
                         <span>Options</span>
                         <ul className="optionMenu">
                           <h3>Options</h3>
-                          <li>
+                          <li className="disabled-buttons">
                             <img src={editIcon} alt="" />
                             Edit Brand
                           </li>

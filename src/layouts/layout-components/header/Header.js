@@ -25,6 +25,10 @@ export default (props) => {
     var brand = headerSettings.brandList.find((brand) => {
       return brand.brand_id == headerSettings.activeBrandId;
     });
+
+    if (!brand && headerSettings.brandList.length < 1) {
+      return { brandName: "", brandImage: "" };
+    }
     if (!brand) brand = headerSettings.brandList[0];
 
     return { brandName: brand.title, brandImage: brand.logo };
@@ -57,7 +61,7 @@ export default (props) => {
             )}
 
             <li>
-              <a href="#">
+              <a href="#" className="disabled-buttons">
                 <img
                   className="icon-img"
                   src={projectBoardIcon}
@@ -73,10 +77,16 @@ export default (props) => {
               </Link>
             </li>
             <li>
-              <button>Outsourcer plan</button>
+              <button type="button" className="disabled-buttons">
+                Outsourcer plan
+              </button>
             </li>
             <li>
-              <img className="icon-img-bel" src={bellIcon} alt="bell icon" />
+              <img
+                className="icon-img-bel disabled-buttons"
+                src={bellIcon}
+                alt="bell icon"
+              />
             </li>
             <li>
               <img src={dummyProfileIcon} alt="profile" />

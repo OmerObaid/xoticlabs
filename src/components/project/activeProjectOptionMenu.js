@@ -36,11 +36,11 @@ const ActiveProjectOptionMenu = ({ projectId, updateProjects }) => {
           <img src={checkCircle} alt="" />
           Mark as complete
         </li>
-        <li>
+        <li className="disabled-buttons">
           <img src={duplicateProjectIcon} alt="" />
           Duplicate project
         </li>
-        <li>
+        <li className="disabled-buttons">
           <img src={editIcon} alt="" />
           Edit project
         </li>
