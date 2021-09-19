@@ -6,7 +6,7 @@ import inDesignIcon from "../../assets/images/create-project/inDesign.png";
 import illustratorIcon from "../../assets/images/create-project/illustrator.png";
 import { Field } from "formik";
 
-const FileDeliverables = ({ setFieldValue, children }) => {
+const FileDeliverables = ({ children }) => {
   return (
     <>
       <div className="inputField">

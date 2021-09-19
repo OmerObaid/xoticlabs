@@ -13,7 +13,7 @@ import ActiveProjectOptionMenu from "../project/activeProjectOptionMenu";
 import QueueProjectOptionMenu from "../project/queueProjectOptionMenu";
 import MoveProject from "./moveProject";
 
-const ActiveProjects = ({ filterText, ...props }) => {
+const ActiveProjects = ({ filterText, props }) => {
   const { id } = useParams();
 
   const [projects, setProjects] = useState([]);
@@ -59,7 +59,6 @@ const ActiveProjects = ({ filterText, ...props }) => {
   // we get project id, on which project user tapped
   // Queue ooption Menu
   const showMoveToActiveOverlayCallBack = (projectId = "") => {
-    console.log("MOTHERFUCKER", projectId);
     setProjectIdToMoveActive(projectId);
     setShowMoveToActiveOverlay(true);
   };
@@ -124,11 +123,7 @@ const ActiveProjects = ({ filterText, ...props }) => {
           return (
             <div className="productList" key={project.project_id}>
               <div className="productList_single">
-                <img
-                  className="productList_image"
-                  src={project.project_logo}
-                  alt=""
-                />
+                <img className="productList_image" src={project.logo} alt="" />
                 <div className="productList_details">
                   <div className="heading">
                     <h2>{project.title}</h2>
@@ -147,6 +142,7 @@ const ActiveProjects = ({ filterText, ...props }) => {
                   <ActiveProjectOptionMenu
                     projectId={project.project_id}
                     updateProjects={updateProjectListingCallBack}
+                    props={props}
                   />
                 </button>
               </div>

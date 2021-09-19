@@ -73,7 +73,9 @@ const Brand = (props) => {
             </div>
             <button onClick={handleNewProjectClick}>+ New project</button>
           </div>
-          {showActiveProjects && <ActiveProjects filterText={searchText} />}
+          {showActiveProjects && (
+            <ActiveProjects filterText={searchText} props={props} />
+          )}
           {showCompletedProjects && (
             <CompletedProjects filterText={searchText} />
           )}

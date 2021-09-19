@@ -39,7 +39,6 @@ const Login = (props) => {
                       props.history.push(from);
                     },
                     (error) => {
-                      // console.log(error);
                       setSubmitting(false);
                       setStatus(error);
                     }

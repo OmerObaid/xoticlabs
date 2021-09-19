@@ -23,7 +23,7 @@ import swal from "sweetalert";
 import { useDispatch } from "react-redux";
 import { setActiveBrandId } from "../../redux/headerSettings/Action";
 
-const CreateProject = (props) => {
+const EditProject = (props) => {
   let history = useHistory();
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
@@ -124,7 +124,7 @@ const CreateProject = (props) => {
               <img src={backIcon} alt="backSymbol" />
               <span>Back</span>
             </div>
-            <h1 className="cnp-head">Create a new project</h1>
+            <h1 className="cnp-head">Edit project</h1>
 
             <Formik
               initialValues={{
@@ -316,4 +316,4 @@ const CreateProject = (props) => {
   );
 };
 
-export default CreateProject;
+export default EditProject;

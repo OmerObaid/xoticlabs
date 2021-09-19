@@ -9,7 +9,7 @@ import swal from "sweetalert";
 import { PROJECT_MARKED_COMPLETED } from "../../views/constants";
 import { OptionMenuHelper } from "./optionMenuHelper";
 
-const ActiveProjectOptionMenu = ({ projectId, updateProjects }) => {
+const ActiveProjectOptionMenu = ({ projectId, updateProjects, props }) => {
   const handleMarkAsCompleteClick = () => {
     var helper = FormDataHelper();
     helper.append("project_id", projectId);
@@ -21,11 +21,15 @@ const ActiveProjectOptionMenu = ({ projectId, updateProjects }) => {
           icon: "success",
         });
         updateProjects();
-      },
-      (errorResponse) => {
-        console.log(errorResponse);
       }
     );
+  };
+
+  const handleEditProjectClick = () => {
+    const { from } = props.location.state || {
+      from: { pathname: `/editProject/${projectId}` },
+    };
+    props.history.push(from);
   };
 
   return (
@@ -40,7 +44,7 @@ const ActiveProjectOptionMenu = ({ projectId, updateProjects }) => {
           <img src={duplicateProjectIcon} alt="" />
           Duplicate project
         </li>
-        <li className="disabled-buttons">
+        <li onClick={handleEditProjectClick}>
           <img src={editIcon} alt="" />
           Edit project
         </li>

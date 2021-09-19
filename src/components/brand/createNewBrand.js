@@ -44,9 +44,6 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
     GeneralServices.postRequest(helper, INDUSTRIES_LISTING).then(
       (successResponse) => {
         setIndustries(successResponse.data);
-      },
-      (errorResponse) => {
-        console.log("Failed to log industries");
       }
     );
   };
@@ -88,7 +85,6 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
               logo: Yup.mixed().required("logo is required"),
             })}
             onSubmit={(values, actions) => {
-              console.log(values);
               actions.setStatus();
               var helper = FormDataHelper();
 
@@ -193,10 +189,6 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                       ],
                     }}
                     data="<p>Insert your text here</p>"
-                    onReady={(editor) => {
-                      // You can store the "editor" and use when it is needed.
-                      console.log("Editor is ready to use!", editor);
-                    }}
                     onChange={(event, editor) => {
                       setFieldValue("description", editor.getData());
                     }}

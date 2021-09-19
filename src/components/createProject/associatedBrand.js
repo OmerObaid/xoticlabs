@@ -15,19 +15,23 @@ import { Field } from "formik";
 const AssociatedBrand = ({
   showCreateBrandOverLay,
   shouldUpdateBrand,
+  setFieldValue,
   children,
 }) => {
   const clientId = AuthenticationService.currentUserValue.id;
   const headerSettings = useSelector((state) => state.headerSettings);
   const [brands, setBrands] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState("");
   const dispatch = useDispatch();
 
   const handleCreateBrandClick = () => {
     showCreateBrandOverLay();
   };
 
-  const handleRadioButtonSelect = (event) => {
-    console.log("associated-brand-id", event.target.value);
+  const handleBrandClick = (e) => {
+    var brandId = e.target.getAttribute("data-value");
+    setFieldValue("associatedBrand", brandId);
+    setSelectedBrand(brandId);
   };
 
   const fetchBrands = () => {
@@ -42,7 +46,6 @@ const AssociatedBrand = ({
     );
   };
   useEffect(() => {
-    console.log("fetching brands - associated brands");
     if (brands.length < 1 || shouldUpdateBrand) {
       fetchBrands();
       shouldUpdateBrand = false;
@@ -57,29 +60,28 @@ const AssociatedBrand = ({
           {brands.length > 0 &&
             brands.map((brand) => {
               return (
-                <div className="assocBrands_single" key={brand.brand_id}>
-                  <Field
-                    type="radio"
-                    name="associatedBrand"
-                    hidden
-                    id={`brand_${brand.brand_id}`}
-                    value={brand.brand_id}
-                    // onClick={handleRadioButtonSelect}
-                  />
-                  <div className="assocBrands_head">
+                <div
+                  className="assocBrands_single"
+                  key={brand.brand_id}
+                  onClick={handleBrandClick}
+                  data-value={brand.brand_id}
+                >
+                  <input type="radio" name="associatedBrand" hidden />
+                  <div className="assocBrands_head" data-value={brand.brand_id}>
                     <img
                       src={
-                        brand.brand_id == headerSettings.activeBrandId
+                        brand.brand_id == selectedBrand
                           ? activeBrandIcon
                           : brandIcon
                       }
+                      data-value={brand.brand_id}
                       alt="brand"
                     />
-                    <label htmlFor={`brand_${brand.brand_id}`}>
-                      {brand.title}
-                    </label>
+                    <label data-value={brand.brand_id}>{brand.title}</label>
                   </div>
-                  <p>{`Used in ${brand.used_id} projects`}</p>
+                  <p
+                    data-value={brand.brand_id}
+                  >{`Used in ${brand.used_id} projects`}</p>
                 </div>
               );
             })}

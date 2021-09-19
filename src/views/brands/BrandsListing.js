@@ -42,9 +42,6 @@ const BrandsListing = (props) => {
       (successResponse) => {
         setBrands(successResponse.data);
         dispatch(setBrandList(successResponse.data));
-      },
-      (errorResponse) => {
-        console.log("brand listing error", errorResponse);
       }
     );
   };
@@ -80,9 +77,6 @@ const BrandsListing = (props) => {
               icon: "success",
             });
             fetchBrands();
-          },
-          (errorResponse) => {
-            console.log("failed to delete the brand");
           }
         );
       } else {
@@ -96,7 +90,6 @@ const BrandsListing = (props) => {
     const { from } = props.location.state || {
       from: { pathname: `/brand/${brandId}` },
     };
-    console.log(from);
     props.history.push(from);
   };
 

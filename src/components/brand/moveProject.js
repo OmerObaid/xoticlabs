@@ -17,7 +17,6 @@ const MoveProject = ({ projects, closeOverlay }) => {
 
   const handleRadioButtonSelect = (event) => {
     setSelectedProjectId(event.target.value);
-    console.log(event.target.value);
   };
 
   return (

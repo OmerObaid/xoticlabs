@@ -23,9 +23,6 @@ function markProjectComplete(projectId, updateProjects) {
         icon: "success",
       });
       updateProjects();
-    },
-    (errorResponse) => {
-      console.log(errorResponse);
     }
   );
 }
@@ -49,9 +46,6 @@ function deleteProject(projectId, updateProjects) {
             icon: "success",
           });
           updateProjects();
-        },
-        (errorResponse) => {
-          console.log(errorResponse);
         }
       );
     } else {
