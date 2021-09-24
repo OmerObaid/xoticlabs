@@ -7,19 +7,17 @@ import { GeneralServices } from "../../jwt/_services/General.services";
 import { BRANDS_LISTING } from "../../jwt/_services/axiousURL";
 import { useState } from "react";
 import { AuthenticationService } from "../../jwt/_services";
-import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { setBrandList } from "../../redux/headerSettings/Action";
-import { Field } from "formik";
 
 const AssociatedBrand = ({
   showCreateBrandOverLay,
   shouldUpdateBrand,
+  brand = "",
   setFieldValue,
   children,
 }) => {
   const clientId = AuthenticationService.currentUserValue.id;
-  const headerSettings = useSelector((state) => state.headerSettings);
   const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState("");
   const dispatch = useDispatch();
@@ -51,6 +49,10 @@ const AssociatedBrand = ({
       shouldUpdateBrand = false;
     }
   }, [shouldUpdateBrand]);
+
+  useEffect(() => {
+    setSelectedBrand(brand);
+  }, [brand]);
 
   return (
     <>

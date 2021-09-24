@@ -11,6 +11,7 @@ import CategorySearch from "../../components/createProject/categorySearch";
 import {
   IMAGE_SPECIFICATIONS_LISTING,
   PROJECT_ADD,
+  PROJECT_LISTING,
 } from "../../jwt/_services/axiousURL";
 import { useEffect, useState, useRef } from "react";
 import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
@@ -22,9 +23,11 @@ import CreateNewBrand from "../../components/brand/createNewBrand";
 import swal from "sweetalert";
 import { useDispatch } from "react-redux";
 import { setActiveBrandId } from "../../redux/headerSettings/Action";
+import { useParams } from "react-router";
 
 const EditProject = (props) => {
   let history = useHistory();
+  const { id } = useParams();
   const scrollRef = useRef(null);
   const dispatch = useDispatch();
   const [allImageSpecifications, setAllImageSpecifications] = useState([]);
@@ -32,6 +35,7 @@ const EditProject = (props) => {
   const [filteredImgSpecs, setFilteredImgSpecs] = useState([]);
   const [showCreateBrand, setShowCreateBrand] = useState(false);
   const [shouldUpdateBrand, setShouldUpdateBrand] = useState(false);
+  const [project, setProject] = useState({ title: "", description: "" });
 
   const fetchImageSpecificatins = () => {
     var helper = FormDataHelper();
@@ -84,6 +88,19 @@ const EditProject = (props) => {
     if (callFetchBrands) setShouldUpdateBrand(true);
   };
 
+  const fetchProject = () => {
+    var helper = FormDataHelper();
+    helper.append("project_id", id);
+
+    GeneralServices.postRequest(helper, PROJECT_LISTING).then(
+      (successResponse) => {
+        var project = successResponse.data;
+        if (project.length > 0) setProject(project[0]);
+        console.log("edit project - ", project);
+      }
+    );
+  };
+
   useEffect(() => {
     fetchImageSpecificatins();
   }, []);
@@ -111,6 +128,14 @@ const EditProject = (props) => {
     setFilteredImgSpecs(imgSpecs);
   }, [selectedSubCategoryId]);
 
+  /**
+   * USE EFFECT FOR FETCHING PROJECT DETAILS
+   */
+
+  useEffect(() => {
+    fetchProject();
+  }, []);
+
   return (
     <>
       <section className="cnp" ref={scrollRef}>
@@ -127,13 +152,14 @@ const EditProject = (props) => {
             <h1 className="cnp-head">Edit project</h1>
 
             <Formik
+              enableReinitialize={true}
               initialValues={{
-                title: "",
+                title: project.title,
                 subCategoryId: "",
                 imageSpecification: "",
-                description: "",
+                description: project.description,
                 deliverable: "",
-                associatedBrand: "",
+                associatedBrand: project.brand_id,
                 attachments: "",
               }}
               validationSchema={Yup.object().shape({
@@ -190,7 +216,7 @@ const EditProject = (props) => {
                 // return;
               }}
             >
-              {({ isSubmitting, setFieldValue }) => (
+              {({ isSubmitting, setFieldValue, values }) => (
                 <Form name="parentForm">
                   <div className="inputField">
                     <label className="inputLabel" htmlFor="projTitle">
@@ -267,7 +293,7 @@ const EditProject = (props) => {
                           "CKFinder",
                         ],
                       }}
-                      data="<p>Insert your text here</p>"
+                      data={values.description}
                       onChange={(event, editor) => {
                         setFieldValue("description", editor.getData());
                       }}
@@ -291,6 +317,7 @@ const EditProject = (props) => {
                   <AssociatedBrand
                     shouldUpdateBrand={shouldUpdateBrand}
                     showCreateBrandOverLay={showCreateBrandOverlayCallBack}
+                    brand={values.associatedBrand}
                     setFieldValue={setFieldValue}
                   >
                     <ErrorMessage

@@ -12,6 +12,7 @@ export const INDUSTRIES_LISTING = "list_industries";
 //PROJECTS URL
 export const PROJECT_LISTING = "list_projects";
 export const PROJECT_STATUS_UPDATE = "update_status_project";
+export const PROJECT_ADD = "add_project";
 
 //Category URL
 export const CATEGORIES_LISTING = "list_project_category";
@@ -21,9 +22,6 @@ export const SUB_CATEGORIES_LISTING = "list_project_sub_category";
 
 //Image Specifications URL
 export const IMAGE_SPECIFICATIONS_LISTING = "list_image_specfications";
-
-//Add Project URL
-export const PROJECT_ADD = "add_project";
 
 // API CONSTANTS
 export const API_USERNAME = "43541965248c40cb5adb1761b8302dc5e1107b23";
