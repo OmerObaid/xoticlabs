@@ -4,12 +4,46 @@ import checkCircle from "../../assets/images/check circle.png";
 import moveToActiveIcon from "../../assets/images/icon Move to active.png";
 import duplicateProjectIcon from "../../assets/images/icon Duplicate project.png";
 import { OptionMenuHelper } from "./optionMenuHelper";
+import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
+import { GeneralServices } from "../../jwt/_services/General.services";
+import { PROJECT_STATUS_UPDATE } from "../../jwt/_services/axiousURL";
+import swal from "sweetalert";
 
 const QueueProjectOptionMenu = ({
   projectId,
   showMoveToActive,
   updateProjects,
+  props,
 }) => {
+  const handleEditProjectClick = () => {
+    const { from } = props.location.state || {
+      from: { pathname: `/editProject/${projectId}` },
+    };
+    props.history.push(from);
+  };
+
+  const handleDuplicateProjectClick = () => {
+    const { from } = props.location.state || {
+      from: { pathname: `/duplicateProject/${projectId}` },
+    };
+    props.history.push(from);
+  };
+
+  const handleMoveToDraftsClick = () => {
+    var helper = FormDataHelper();
+    helper.append("project_id", projectId);
+    helper.append("status", "D");
+
+    GeneralServices.postRequest(helper, PROJECT_STATUS_UPDATE).then(
+      (successResponse) => {
+        swal("Project Moved to Drafts", {
+          icon: "success",
+        });
+        updateProjects();
+      }
+    );
+  };
+
   return (
     <>
       <ul className="optionMenu">
@@ -22,7 +56,7 @@ const QueueProjectOptionMenu = ({
           <img src={checkCircle} alt="" />
           Mark as complete
         </li>
-        <li className="disabled-buttons">
+        <li onClick={handleDuplicateProjectClick}>
           <img src={duplicateProjectIcon} alt="" />
           Duplicate project
         </li>
@@ -30,9 +64,13 @@ const QueueProjectOptionMenu = ({
           <img src={moveToActiveIcon} alt="" />
           Move to active
         </li>
-        <li className="disabled-buttons">
+        <li onClick={handleEditProjectClick}>
           <img src={editIcon} alt="" />
           Edit project
+        </li>
+        <li onClick={handleMoveToDraftsClick}>
+          <img src={moveToActiveIcon} alt="" />
+          Move to Drafts
         </li>
         <li
           onClick={() =>

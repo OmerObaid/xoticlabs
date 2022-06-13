@@ -7,8 +7,16 @@ import logoImage from "../../assets/images/xotic-logo.png";
 import bannerImage from "../../assets/images/login-Banner.png";
 import { PROJECT_NAME } from "../constants";
 import { AuthenticationService } from "../../jwt/_services";
+import {
+  setAccountCancelStatus,
+  setAccountPauseStatus,
+  setAccountPlanTitle,
+  setAccountSuspendedStatus,
+} from "../../redux/headerSettings/Action";
+import { useDispatch } from "react-redux";
 
 const Login = (props) => {
+  const dispatch = useDispatch();
   return (
     <>
       <div className="bodyClone">
@@ -33,6 +41,11 @@ const Login = (props) => {
                   setStatus();
                   AuthenticationService.login(email, password).then(
                     (user) => {
+                      dispatch(setAccountPauseStatus(user.is_pause));
+                      dispatch(setAccountCancelStatus(user.is_canceled));
+                      dispatch(setAccountSuspendedStatus(user.is_suspended));
+                      dispatch(setAccountPlanTitle(user.plan_title));
+
                       const { from } = props.location.state || {
                         from: { pathname: "/" },
                       };
@@ -69,7 +82,7 @@ const Login = (props) => {
                     <div className="inputFields">
                       <div className="label">
                         <label htmlFor="password">Password</label>
-                        <a href="#">Forgot your password?</a>
+                        <Link to="/forget-password">Forgot your password?</Link>
                       </div>
                       <Field
                         name="password"

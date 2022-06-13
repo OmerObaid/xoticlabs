@@ -8,13 +8,18 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import * as Yup from "yup";
 import ColorBox from "../colorBox";
 import { useState, useEffect } from "react";
-import AttachmentGuidlines from "./attachmentGuidlines";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { AuthenticationService } from "../../jwt/_services";
 import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
 import { GeneralServices } from "../../jwt/_services/General.services";
-import { BRAND_ADD, INDUSTRIES_LISTING } from "../../jwt/_services/axiousURL";
+import {
+  BRAND_ADD,
+  LIST_DESIGN_OPTIONS,
+  LIST_INDUSTRY_OPTIONS,
+} from "../../jwt/_services/axiousURL";
 import swal from "sweetalert";
+import Attachments from "../createProject/attachments";
+import BrandDefinition from "./brandDefinition";
 
 const CreateNewBrand = ({ crossButtonCallBack }) => {
   const clientId = AuthenticationService.currentUserValue.id;
@@ -23,10 +28,10 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
   const [showColorBox, setShowColorBox] = useState(false);
   const [sohwLogoFileSelected, setSohwLogoFileSelected] = useState(false);
   const [showGuideFileSelected, setShowGuideFileSelected] = useState(false);
-  const [showAttachmentFileSelected, setShowAttachmentFileSelected] =
-    useState(false);
-  const [attachmentCount, setAttachmentCount] = useState(0);
-  const [industries, setIndustries] = useState([]);
+  // const [showAttachmentFileSelected, setShowAttachmentFileSelected] =
+  //   useState(false);
+  // const [attachmentCount, setAttachmentCount] = useState(0);
+  // const [industries, setIndustries] = useState([]);
 
   const closeColorBoxCallBack = ({ color }) => {
     setShowColorBox(false);
@@ -39,18 +44,18 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
     setColors([...colors]);
   };
 
-  const fetchIndustries = () => {
-    var helper = FormDataHelper();
-    GeneralServices.postRequest(helper, INDUSTRIES_LISTING).then(
-      (successResponse) => {
-        setIndustries(successResponse.data);
-      }
-    );
-  };
+  // const fetchIndustries = () => {
+  //   var helper = FormDataHelper();
+  //   GeneralServices.postRequest(helper, INDUSTRIES_LISTING).then(
+  //     (successResponse) => {
+  //       setIndustries(successResponse.data);
+  //     }
+  //   );
+  // };
 
-  useEffect(() => {
-    fetchIndustries();
-  }, []);
+  // useEffect(() => {
+  //   fetchIndustries();
+  // }, []);
 
   return (
     <>
@@ -77,20 +82,34 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
               description: "",
               website: "",
               logo: "",
+              defines: [],
+              requires: [],
             }}
             validationSchema={Yup.object().shape({
               brandName: Yup.string().required("Brand name is required"),
-              industry: Yup.number().required("Industry is required"),
-              description: Yup.string().min(1).max(150).required(),
+              // industry: Yup.number().required("Industry is required"),
+              requires: Yup.array().min(
+                1,
+                "Please select at least one check box"
+              ),
+              defines: Yup.array().min(
+                1,
+                "Please select at least one check box"
+              ),
+              description: Yup.string().required(),
               logo: Yup.mixed().required("logo is required"),
             })}
             onSubmit={(values, actions) => {
+              // console.log(values);
+              // return;
               actions.setStatus();
               var helper = FormDataHelper();
 
               helper.append("client_id", clientId);
               helper.append("title", values.brandName);
-              helper.append("industry_id", values.industry);
+              // helper.append("industry_id", values.industry);
+              helper.append("defines", JSON.stringify(values.defines));
+              helper.append("requires", JSON.stringify(values.requires));
               helper.append("description", values.description);
               helper.append("website", values.website);
               if (colors.length > 0) {
@@ -134,12 +153,12 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                     <Field type="text" id="brandName" name="brandName" />
                   </div>
                   <ErrorMessage
-                    name="logo"
+                    name="brandName"
                     component="div"
                     className="invalid-feedback"
                   />
                 </div>
-                <div className="inputField">
+                {/* <div className="inputField">
                   <label className="inputLabel required" htmlFor="industry">
                     Industry
                   </label>
@@ -166,6 +185,36 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                     component="div"
                     className="invalid-feedback"
                   />
+                </div> */}
+
+                <div className="inputField">
+                  <BrandDefinition
+                    checkboxName={"defines"}
+                    titleString="What best defines your industry?"
+                    URL={LIST_INDUSTRY_OPTIONS}
+                  >
+                    <ErrorMessage
+                      name="defines"
+                      component="div"
+                      className="invalid-feedback"
+                    />
+                  </BrandDefinition>
+                  <br />
+                </div>
+
+                <div className="inputField">
+                  <BrandDefinition
+                    checkboxName={"requires"}
+                    titleString="What do you want to create?"
+                    URL={LIST_DESIGN_OPTIONS}
+                  >
+                    <ErrorMessage
+                      name="requires"
+                      component="div"
+                      className="invalid-feedback"
+                    />
+                  </BrandDefinition>
+                  <br />
                 </div>
 
                 <div className="inputField description">
@@ -306,7 +355,11 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                 {showColorBox && (
                   <ColorBox closeCallBack={closeColorBoxCallBack} />
                 )}
-                <div className="inputField">
+                <Attachments
+                  setFieldValue={setFieldValue}
+                  showGuideLines={true}
+                />
+                {/* <div className="inputField">
                   <p className="inputLabel">Attachments</p>
                   <AttachmentGuidlines />
                   <div className="attach-cont">
@@ -336,7 +389,7 @@ const CreateNewBrand = ({ crossButtonCallBack }) => {
                       )}
                     </p>
                   </div>
-                </div>
+                </div> */}
 
                 <button
                   type="submit"

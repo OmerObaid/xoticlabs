@@ -1,6 +1,5 @@
 import checkCircle from "../../assets/images/check circle white.png";
 import smileIcon from "../../assets/images/smile.png";
-import activeWorkIcon from "../../assets/images/brand-page-icons/active work image.png";
 
 import { useState, useEffect } from "react";
 import { useParams } from "react-router";
@@ -8,11 +7,26 @@ import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
 import { PROJECT_LISTING } from "../../jwt/_services/axiousURL";
 import { GeneralServices } from "../../jwt/_services/General.services";
 
-const CompletedProjects = ({ filterText, ...props }) => {
+const CompletedProjects = ({ filterText, props }) => {
   const { id } = useParams();
 
   const [completedProjects, setCompletedProjects] = useState([]);
   const [allCompletedProjects, setAllCompletedProjects] = useState([]);
+
+  const handleProjectClick = (projectId) => {
+    // const from = props.location.state || {
+    //   pathname: "/project",
+    //   state: {
+    //     projectId: projectId,
+    //   },
+    // };
+    // props.history.push(from);
+
+    const { from } = props.location.state || {
+      from: { pathname: `/projectDetail/${projectId}` },
+    };
+    props.history.push(from);
+  };
 
   const fetchCompletedProjects = () => {
     var helper = FormDataHelper();
@@ -58,13 +72,17 @@ const CompletedProjects = ({ filterText, ...props }) => {
                 <div className="head">
                   <img
                     className="productList_image"
-                    // src={activeWorkIcon}
-                    src={project.project_logo}
+                    src={project.logo}
                     alt=""
                   />
                   <div className="productList_details">
                     <div className="heading">
-                      <h2>{project.title}</h2>
+                      <h2
+                        style={{ cursor: "pointer" }}
+                        onClick={() => handleProjectClick(project.project_id)}
+                      >
+                        {project.title}
+                      </h2>
                       <div className="inProg">
                         <span>Completed</span> <img src={checkCircle} alt="" />
                       </div>

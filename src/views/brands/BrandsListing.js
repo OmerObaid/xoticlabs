@@ -21,11 +21,15 @@ import {
 
 import swal from "sweetalert";
 import CreateNewBrand from "../../components/brand/createNewBrand";
+import EditBrand from "./editBrand";
+import { isAccountPaused } from "../../helper/accountHelper";
 
 const BrandsListing = (props) => {
   const clientId = AuthenticationService.currentUserValue.id;
   const [brands, setBrands] = useState([]);
   const [showCreateNewBrand, setShowCreateNewBrand] = useState(false);
+  const [showEditBrand, setShowEditBrand] = useState(false);
+  const [selectedBrandIdForEdit, setSelectedBrandIdForEdit] = useState("");
   const dispatch = useDispatch();
   const headerSettings = useSelector((state) => state.headerSettings);
 
@@ -57,6 +61,7 @@ const BrandsListing = (props) => {
 
   const closeCreateNewBrandOverlay = (callFetchBrands = false) => {
     setShowCreateNewBrand(false);
+    setShowEditBrand(false);
     if (callFetchBrands) fetchBrands();
   };
 
@@ -73,14 +78,14 @@ const BrandsListing = (props) => {
         helper.append("brand_id", brandId);
         GeneralServices.postRequest(helper, BRAND_DELETE).then(
           (successResponse) => {
-            swal("Brand added successfully!", {
+            swal("Brand deleted successfully!", {
               icon: "success",
             });
             fetchBrands();
           }
         );
       } else {
-        console.log("User oppted to not delete the brand");
+        console.log("User oppted to not delete the project");
       }
     });
   };
@@ -93,19 +98,33 @@ const BrandsListing = (props) => {
     props.history.push(from);
   };
 
+  const handleEditBrandClick = (brandId) => {
+    setSelectedBrandIdForEdit(brandId);
+    setShowEditBrand(true);
+  };
+
   return (
     <>
       <section className="blp">
         <main className="cont">
           <div className="pageHead">
             <h1>Brands</h1>
-            <button onClick={() => setShowCreateNewBrand(true)}>
-              + Create brand
-            </button>
+            {!isAccountPaused(headerSettings) && (
+              <button onClick={() => setShowCreateNewBrand(true)}>
+                + Create brand
+              </button>
+            )}
           </div>
 
           {showCreateNewBrand && (
             <CreateNewBrand crossButtonCallBack={closeCreateNewBrandOverlay} />
+          )}
+
+          {showEditBrand && (
+            <EditBrand
+              brandId={selectedBrandIdForEdit}
+              crossButtonCallBack={closeCreateNewBrandOverlay}
+            />
           )}
 
           <div className="brandsBody">
@@ -136,7 +155,9 @@ const BrandsListing = (props) => {
                         <span>Options</span>
                         <ul className="optionMenu">
                           <h3>Options</h3>
-                          <li className="disabled-buttons">
+                          <li
+                            onClick={() => handleEditBrandClick(brand.brand_id)}
+                          >
                             <img src={editIcon} alt="" />
                             Edit Brand
                           </li>

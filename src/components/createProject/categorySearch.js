@@ -12,19 +12,21 @@ import useFocus from "../customHooks/useFocus";
 const CategorySearch = ({
   getSelectedSubCategoryId,
   setFieldValue,
+  isEditMode = false,
+  categoryTitleParam,
+  categoryIdParam,
   children,
 }) => {
   const [inputRef, setInputFocus] = useFocus();
-  const [allCategories, setAllCategories] = useState([]);
-  const [allSubCategories, setAllSubCategories] = useState([]);
-  const [searchListingData, setSearchListingData] = useState([]);
 
-  const [showSearchListing, setShowSearchListing] = useState(false);
-  const [showSelectedSubCategory, setShowSelectedSubCategory] = useState(false);
+  const [allCategories, setAllCategories] = useState([]); // all Categories
+  const [allSubCategories, setAllSubCategories] = useState([]); // all sub categories
+  const [searchListingData, setSearchListingData] = useState([]); // combine data categories and sub categories for drop down
 
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
-
-  const [searchText, setSearchText] = useState("");
+  const [showSearchListing, setShowSearchListing] = useState(false); // show drop down
+  const [showSelectedSubCategory, setShowSelectedSubCategory] = useState(false); // show selected category
+  const [selectedSubCategory, setSelectedSubCategory] = useState(""); // selected sub category
+  const [searchText, setSearchText] = useState(""); // search text
 
   const fetchCategories = () => {
     var helper = FormDataHelper();
@@ -108,6 +110,17 @@ const CategorySearch = ({
   useEffect(() => {
     readyDataForSearchListing();
   }, [allCategories, allSubCategories, searchText]);
+
+  useEffect(() => {
+    if (isEditMode && categoryIdParam) {
+      getSelectedSubCategoryId(categoryIdParam);
+      setFieldValue("subCategoryId", categoryIdParam);
+      setSelectedSubCategory(categoryTitleParam);
+
+      setShowSearchListing(false);
+      setShowSelectedSubCategory(true);
+    }
+  }, [isEditMode, categoryTitleParam, categoryIdParam]);
 
   return (
     <>

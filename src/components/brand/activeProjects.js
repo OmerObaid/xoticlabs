@@ -4,6 +4,7 @@ import gearIcon from "../../assets/images/gear.png";
 import { useState, useEffect } from "react";
 import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
 import {
+  CLIENT_ALLOWED_PROJECTS,
   PROJECT_LISTING,
   PROJECT_STATUS_UPDATE,
 } from "../../jwt/_services/axiousURL";
@@ -12,6 +13,9 @@ import { useParams } from "react-router";
 import ActiveProjectOptionMenu from "../project/activeProjectOptionMenu";
 import QueueProjectOptionMenu from "../project/queueProjectOptionMenu";
 import MoveProject from "./moveProject";
+import { getClientId } from "../../helper/siteHelper";
+import { isAccountPaused } from "../../helper/accountHelper";
+import { useSelector } from "react-redux";
 
 const ActiveProjects = ({ filterText, props }) => {
   const { id } = useParams();
@@ -24,6 +28,8 @@ const ActiveProjects = ({ filterText, props }) => {
 
   const [showMoveToActiveOverlay, setShowMoveToActiveOverlay] = useState(false);
   const [projectIdToMoveActive, setProjectIdToMoveActive] = useState("");
+
+  const headerSettings = useSelector((state) => state.headerSettings);
 
   const fetchProjects = (projectStatus) => {
     var helper = FormDataHelper();
@@ -48,6 +54,33 @@ const ActiveProjects = ({ filterText, props }) => {
     );
   };
 
+  const fetchUserAllowedProjects = () => {
+    var helper = FormDataHelper();
+    helper.append("client_id", getClientId());
+
+    GeneralServices.postRequest(helper, CLIENT_ALLOWED_PROJECTS).then(
+      (successResponse) => {
+        if (
+          successResponse.message_key == "successful_request" &&
+          successResponse.data.length > 0
+        ) {
+          let allowedProjects = successResponse.data[0].active_task_allowed;
+          let currentlyActiveProjects =
+            successResponse.data[0].Current_projects_in_Queue;
+
+          if (currentlyActiveProjects >= allowedProjects) {
+            setShowMoveToActiveOverlay(true);
+          } else if (currentlyActiveProjects < allowedProjects) {
+            updateProjectStatus(projectIdToMoveActive, "I");
+          }
+        }
+      },
+      (errorResponse) => {
+        console.log("failed to move task");
+      }
+    );
+  };
+
   // Active Option Menu CallBack
   // This function call when user mark project as complete
   const updateProjectListingCallBack = () => {
@@ -60,14 +93,15 @@ const ActiveProjects = ({ filterText, props }) => {
   // Queue ooption Menu
   const showMoveToActiveOverlayCallBack = (projectId = "") => {
     setProjectIdToMoveActive(projectId);
-    setShowMoveToActiveOverlay(true);
+    fetchUserAllowedProjects();
+    // setShowMoveToActiveOverlay(true);
   };
 
   // CallBack to close the Switch And Move Overlay
   // Optional Param Projectid, If user select the project he wants to switch
 
   const closeMoveToActiveOverlayCallBack = (projectId = "") => {
-    if (projectId !== "" && projectIdToMoveActive !== "") {
+    if (projectId !== "" && projectIdToMoveActive !== "" && projectId !== 0) {
       // update project status to active
       updateProjectStatus(projectId, "Q");
       updateProjectStatus(projectIdToMoveActive, "I");
@@ -85,9 +119,23 @@ const ActiveProjects = ({ filterText, props }) => {
       (successResponse) => {
         fetchProjects("I");
         fetchProjects("Q");
-      },
-      (errorResponse) => {}
+      }
     );
+  };
+
+  const handleProjectClick = (projectId) => {
+    // const from = props.location.state || {
+    //   pathname: "/project",
+    //   state: {
+    //     projectId: projectId,
+    //   },
+    // };
+    // props.history.push(from);
+
+    const { from } = props.location.state || {
+      from: { pathname: `/projectDetail/${projectId}` },
+    };
+    props.history.push(from);
   };
 
   useEffect(() => {
@@ -96,7 +144,7 @@ const ActiveProjects = ({ filterText, props }) => {
   }, [id]);
 
   useEffect(() => {
-    if (filterText == "") {
+    if (filterText === "") {
       setProjects(allProjects);
       setQueueProjects(allQueueProjects);
     }
@@ -123,12 +171,26 @@ const ActiveProjects = ({ filterText, props }) => {
           return (
             <div className="productList" key={project.project_id}>
               <div className="productList_single">
-                <img className="productList_image" src={project.logo} alt="" />
+                <img
+                  className="productList_image"
+                  src={project.logo}
+                  alt=""
+                  style={{ maxWidth: "150px", height: "auto" }}
+                />
                 <div className="productList_details">
                   <div className="heading">
-                    <h2>{project.title}</h2>
-                    <div className="inProg">
-                      <span>In Progress</span> <img src={waitingIcon} alt="" />
+                    <h2
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleProjectClick(project.project_id)}
+                    >
+                      {project.title}
+                    </h2>
+                    <div
+                      className="inProg"
+                      style={{ backgroundColor: `#${project.hex_number}` }}
+                    >
+                      <span>{project.project_working_status_title}</span>
+                      <img src={waitingIcon} alt="" />
                     </div>
                   </div>
                   <img
@@ -137,14 +199,16 @@ const ActiveProjects = ({ filterText, props }) => {
                     className="person"
                   />
                 </div>
-                <button className="option">
-                  <img src={gearIcon} alt="" /> <span>Options</span>
-                  <ActiveProjectOptionMenu
-                    projectId={project.project_id}
-                    updateProjects={updateProjectListingCallBack}
-                    props={props}
-                  />
-                </button>
+                {!isAccountPaused(headerSettings) && (
+                  <button className="option">
+                    <img src={gearIcon} alt="" /> <span>Options</span>
+                    <ActiveProjectOptionMenu
+                      projectId={project.project_id}
+                      updateProjects={updateProjectListingCallBack}
+                      props={props}
+                    />
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -160,22 +224,22 @@ const ActiveProjects = ({ filterText, props }) => {
                   <h2>{project.title}</h2>
                 </div>
               </div>
-              <button className="option">
-                <img src={gearIcon} alt="" /> <span>Options</span>
-                <QueueProjectOptionMenu
-                  projectId={project.project_id}
-                  showMoveToActive={showMoveToActiveOverlayCallBack}
-                  updateProjects={updateProjectListingCallBack}
-                />
-              </button>
+              {!isAccountPaused(headerSettings) && (
+                <button className="option">
+                  <img src={gearIcon} alt="" /> <span>Options</span>
+                  <QueueProjectOptionMenu
+                    projectId={project.project_id}
+                    showMoveToActive={showMoveToActiveOverlayCallBack}
+                    updateProjects={updateProjectListingCallBack}
+                    props={props}
+                  />
+                </button>
+              )}
             </div>
           );
         })}
         {showMoveToActiveOverlay && (
-          <MoveProject
-            projects={allProjects}
-            closeOverlay={closeMoveToActiveOverlayCallBack}
-          />
+          <MoveProject closeOverlay={closeMoveToActiveOverlayCallBack} />
         )}
       </div>
     </>

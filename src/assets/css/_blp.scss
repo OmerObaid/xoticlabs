@@ -189,22 +189,6 @@
     }
   }
 
-  label[for="logo"] {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0.5rem;
-    height: 3rem;
-    width: 100%;
-    background: color(footer-color);
-    color: color(secondary-color);
-    gap: 0.5rem;
-
-    img {
-      height: 1rem;
-    }
-  }
-
   .required::after {
     content: "*";
     font-size: 2rem;

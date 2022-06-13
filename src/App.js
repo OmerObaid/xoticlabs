@@ -18,11 +18,23 @@ const App = () => {
       <PersistGate loading={null} persistor={Store.persistor}>
         <Router history={History}>
           <Switch>
-            <Route exact path="/authentication/Login" component={BlankLayout} />;
+            <Route exact path="/authentication/Login" component={BlankLayout} />
+            <Route exact path="/forget-password" component={BlankLayout} />
+            <Route
+              exact
+              path="/forget-password-email"
+              component={BlankLayout}
+            />
+            <Route
+              exact
+              path="/reset-password/:resetToken"
+              component={BlankLayout}
+            />
             {indexRoutes.map((prop, key) => {
               return (
                 <PrivateRoute
                   path={prop.path}
+                  name={prop.name}
                   key={key}
                   component={prop.component}
                 />
@@ -35,4 +47,3 @@ const App = () => {
   );
 };
 export default App;
-

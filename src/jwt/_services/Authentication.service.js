@@ -2,6 +2,7 @@ import { BehaviorSubject } from "rxjs";
 import { CLIENT_LOGIN } from "./axiousURL";
 import axios from "./axiosConfig";
 import { FormDataHelper } from "../_helpers/FormDataHelper";
+import swal from "sweetalert";
 
 const currentUserSubject = new BehaviorSubject(
   JSON.parse(localStorage.getItem("currentUser"))
@@ -40,8 +41,30 @@ function login(username, password) {
   });
 }
 
-function logout() {
+function confirmLogout() {
   // remove user from local storage to log user out
   localStorage.removeItem("currentUser");
   currentUserSubject.next(null);
+  localStorage.clear();
+  window.location.href = "/";
+}
+
+function confirmationBeforeLogout() {
+  swal({
+    title: "Xotic-Labs",
+    text: "Are you sure you want to logout?",
+    icon: "warning",
+    buttons: true,
+    dangerMode: true,
+  }).then((resp) => {
+    if (resp) {
+      confirmLogout();
+    } else {
+      console.log("User oppted not to logout");
+    }
+  });
+}
+
+function logout() {
+  confirmationBeforeLogout();
 }

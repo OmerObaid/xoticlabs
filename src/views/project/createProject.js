@@ -22,6 +22,7 @@ import CreateNewBrand from "../../components/brand/createNewBrand";
 import swal from "sweetalert";
 import { useDispatch } from "react-redux";
 import { setActiveBrandId } from "../../redux/headerSettings/Action";
+import Axios from "axios";
 
 const CreateProject = (props) => {
   let history = useHistory();
@@ -32,6 +33,7 @@ const CreateProject = (props) => {
   const [filteredImgSpecs, setFilteredImgSpecs] = useState([]);
   const [showCreateBrand, setShowCreateBrand] = useState(false);
   const [shouldUpdateBrand, setShouldUpdateBrand] = useState(false);
+  const [saveAsDraftSubmit, setSaveAsDraftSubmit] = useState(false);
 
   const fetchImageSpecificatins = () => {
     var helper = FormDataHelper();
@@ -127,6 +129,7 @@ const CreateProject = (props) => {
             <h1 className="cnp-head">Create a new project</h1>
 
             <Formik
+              values={{}}
               initialValues={{
                 title: "",
                 subCategoryId: "",
@@ -140,7 +143,7 @@ const CreateProject = (props) => {
                 title: Yup.string().required("Project title is required"),
                 subCategoryId: Yup.number().required("Please select category"),
                 imageSpecification: Yup.string(),
-                description: Yup.string().min(1).max(150).required(),
+                description: Yup.string().required(),
                 deliverable: Yup.string().required(
                   "Please Select File deliverables type "
                 ),
@@ -149,6 +152,10 @@ const CreateProject = (props) => {
                 ),
               })}
               onSubmit={(values, actions) => {
+                // console.log(JSON.stringify(values.deliverable));
+                // console.log("valuesssssss bitcch", values);
+                // return;
+                setSaveAsDraftSubmit(false);
                 var helper = FormDataHelper();
 
                 helper.append("title", values.title);
@@ -158,8 +165,12 @@ const CreateProject = (props) => {
                   values.imageSpecification
                 );
                 helper.append("description", values.description);
-                helper.append("file_deliverable_id", values.deliverable);
+                helper.append(
+                  "file_deliverables",
+                  JSON.stringify(values.deliverable)
+                );
                 helper.append("brand_id", values.associatedBrand);
+                if (saveAsDraftSubmit) helper.append("is_draft", "1");
 
                 if (
                   values.hasOwnProperty("attachments") != "" &&
@@ -190,7 +201,7 @@ const CreateProject = (props) => {
                 // return;
               }}
             >
-              {({ isSubmitting, setFieldValue }) => (
+              {({ isSubmitting, submitForm, setFieldValue, values }) => (
                 <Form name="parentForm">
                   <div className="inputField">
                     <label className="inputLabel" htmlFor="projTitle">
@@ -234,7 +245,7 @@ const CreateProject = (props) => {
                           name="imageSpecification"
                         >
                           <option value="">Select image specification</option>
-                          {allImageSpecifications.map((imgSpec) => {
+                          {filteredImgSpecs.map((imgSpec) => {
                             return (
                               <option key={imgSpec.id} value={imgSpec.id}>
                                 {imgSpec.title}
@@ -301,10 +312,27 @@ const CreateProject = (props) => {
                   </AssociatedBrand>
                   <button
                     className="createBrandBtn"
-                    type="submit"
-                    disabled={isSubmitting}
+                    type="button"
+                    // disabled={isSubmitting}
+                    onClick={() => {
+                      setSaveAsDraftSubmit(false);
+                      submitForm();
+                    }}
                   >
                     Create Project
+                  </button>
+                  <button
+                    style={{ marginTop: "10px" }}
+                    className="createBrandBtn"
+                    id="second-button"
+                    type="button"
+                    // disabled={isSubmitting}
+                    onClick={() => {
+                      setSaveAsDraftSubmit(true);
+                      submitForm();
+                    }}
+                  >
+                    Save as Draft
                   </button>
                 </Form>
               )}

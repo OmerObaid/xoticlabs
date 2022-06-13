@@ -10,6 +10,9 @@ import {
 export const OptionMenuHelper = {
   markProjectComplete,
   deleteProject,
+  updateProjectStatus,
+  handleDuplicateProjectClick,
+  handleEditProjectClick,
 };
 
 function markProjectComplete(projectId, updateProjects) {
@@ -26,6 +29,12 @@ function markProjectComplete(projectId, updateProjects) {
     }
   );
 }
+
+/**
+ *
+ * @param {String} projectId id of the project
+ * @param {CallableFunction} updateProjects executes on success
+ */
 
 function deleteProject(projectId, updateProjects) {
   swal({
@@ -52,4 +61,46 @@ function deleteProject(projectId, updateProjects) {
       console.log("User oppted to not delete the project");
     }
   });
+}
+
+/**
+ * Updates the status of the project
+ * @param {String} projectId Id of the project you want to update status
+ * @param {String} status to which status you want to update
+ * @param {String} successMessage the message when project status updated
+ * @param {CallableFunction} updateProjects function executes when status updated successfully
+ */
+
+function updateProjectStatus(
+  projectId,
+  status,
+  successMessage,
+  updateProjects
+) {
+  var helper = FormDataHelper();
+  helper.append("project_id", projectId);
+  helper.append("status", status);
+
+  GeneralServices.postRequest(helper, PROJECT_STATUS_UPDATE).then(
+    (successResponse) => {
+      swal(successMessage, {
+        icon: "success",
+      });
+      updateProjects();
+    }
+  );
+}
+
+function handleDuplicateProjectClick(projectId, props) {
+  const { from } = props.location.state || {
+    from: { pathname: `/duplicateProject/${projectId}` },
+  };
+  props.history.push(from);
+}
+
+function handleEditProjectClick(projectId, props) {
+  const { from } = props.location.state || {
+    from: { pathname: `/editProject/${projectId}` },
+  };
+  props.history.push(from);
 }

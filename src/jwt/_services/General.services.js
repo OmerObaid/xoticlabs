@@ -4,12 +4,14 @@ export const GeneralServices = {
   postRequest,
 };
 
-function postRequest(formData, url) {
+function postRequest(formData, url, progressEvent = null, token = null) {
   return axios({
     method: "post",
     url: url,
     data: formData,
     headers: new Headers(),
+    onUploadProgress: progressEvent,
+    cancelToken: token,
   })
     .then(function (response) {
       if (response.data.status === 200) return response.data;

@@ -10,8 +10,8 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CategorySearch from "../../components/createProject/categorySearch";
 import {
   IMAGE_SPECIFICATIONS_LISTING,
-  PROJECT_ADD,
   PROJECT_LISTING,
+  PROJECT_UPDATE,
 } from "../../jwt/_services/axiousURL";
 import { useEffect, useState, useRef } from "react";
 import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
@@ -24,6 +24,7 @@ import swal from "sweetalert";
 import { useDispatch } from "react-redux";
 import { setActiveBrandId } from "../../redux/headerSettings/Action";
 import { useParams } from "react-router";
+import OldAttachments from "../../components/project/oldAttachments";
 
 const EditProject = (props) => {
   let history = useHistory();
@@ -35,7 +36,11 @@ const EditProject = (props) => {
   const [filteredImgSpecs, setFilteredImgSpecs] = useState([]);
   const [showCreateBrand, setShowCreateBrand] = useState(false);
   const [shouldUpdateBrand, setShouldUpdateBrand] = useState(false);
-  const [project, setProject] = useState({ title: "", description: "" });
+  const [project, setProject] = useState({
+    title: "",
+    description: "",
+    attachments: [],
+  });
 
   const fetchImageSpecificatins = () => {
     var helper = FormDataHelper();
@@ -95,8 +100,17 @@ const EditProject = (props) => {
     GeneralServices.postRequest(helper, PROJECT_LISTING).then(
       (successResponse) => {
         var project = successResponse.data;
-        if (project.length > 0) setProject(project[0]);
-        console.log("edit project - ", project);
+        if (project.length > 0) {
+          let deliverableArr = project[0]["file_deliverables"];
+          let deliverableIdsArr = Array();
+          deliverableArr.forEach((element) => {
+            deliverableIdsArr.push(element["id"]);
+          });
+
+          project[0]["file_deliverables"] = deliverableIdsArr;
+          console.log(project);
+          setProject(project[0]);
+        }
       }
     );
   };
@@ -136,6 +150,10 @@ const EditProject = (props) => {
     fetchProject();
   }, []);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   return (
     <>
       <section className="cnp" ref={scrollRef}>
@@ -155,10 +173,10 @@ const EditProject = (props) => {
               enableReinitialize={true}
               initialValues={{
                 title: project.title,
-                subCategoryId: "",
+                subCategoryId: project.sub_category_id,
                 imageSpecification: "",
                 description: project.description,
-                deliverable: "",
+                deliverable: project.file_deliverables,
                 associatedBrand: project.brand_id,
                 attachments: "",
               }}
@@ -166,7 +184,7 @@ const EditProject = (props) => {
                 title: Yup.string().required("Project title is required"),
                 subCategoryId: Yup.number().required("Please select category"),
                 imageSpecification: Yup.string(),
-                description: Yup.string().min(1).max(150).required(),
+                description: Yup.string().required(),
                 deliverable: Yup.string().required(
                   "Please Select File deliverables type "
                 ),
@@ -177,6 +195,7 @@ const EditProject = (props) => {
               onSubmit={(values, actions) => {
                 var helper = FormDataHelper();
 
+                helper.append("project_id", id);
                 helper.append("title", values.title);
                 helper.append("sub_category_id", values.subCategoryId);
                 helper.append(
@@ -184,7 +203,10 @@ const EditProject = (props) => {
                   values.imageSpecification
                 );
                 helper.append("description", values.description);
-                helper.append("file_deliverable_id", values.deliverable);
+                helper.append(
+                  "file_deliverables",
+                  JSON.stringify(values.deliverable)
+                );
                 helper.append("brand_id", values.associatedBrand);
 
                 if (
@@ -196,9 +218,9 @@ const EditProject = (props) => {
                   }
                 }
 
-                GeneralServices.postRequest(helper, PROJECT_ADD).then(
+                GeneralServices.postRequest(helper, PROJECT_UPDATE).then(
                   (successResponse) => {
-                    swal("Project has created!", {
+                    swal(successResponse.message, {
                       icon: "success",
                     });
 
@@ -239,6 +261,9 @@ const EditProject = (props) => {
                   <CategorySearch
                     getSelectedSubCategoryId={setSelectedSubCategoryCallBack}
                     setFieldValue={setFieldValue}
+                    isEditMode={true}
+                    categoryTitleParam={project.subcategory_title}
+                    categoryIdParam={project.sub_category_id}
                   >
                     <ErrorMessage
                       name="subCategoryId"
@@ -260,7 +285,7 @@ const EditProject = (props) => {
                           name="imageSpecification"
                         >
                           <option value="">Select image specification</option>
-                          {allImageSpecifications.map((imgSpec) => {
+                          {filteredImgSpecs.map((imgSpec) => {
                             return (
                               <option key={imgSpec.id} value={imgSpec.id}>
                                 {imgSpec.title}
@@ -306,6 +331,9 @@ const EditProject = (props) => {
                     />
                   </div>
                   <Attachments setFieldValue={setFieldValue} />
+                  {project.attachments.length > 0 && (
+                    <OldAttachments attachmentsParam={project.attachments} />
+                  )}
 
                   <FileDeliverables>
                     <ErrorMessage
@@ -331,7 +359,7 @@ const EditProject = (props) => {
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    Create Project
+                    Update Project
                   </button>
                 </Form>
               )}

@@ -1,11 +1,17 @@
 import { useDispatch } from "react-redux";
 import { setActiveBrandId } from "../redux/headerSettings/Action";
 
-const HeaderBrandListing = ({ brands, ...props }) => {
+const HeaderBrandListing = ({
+  brands,
+  ulClass,
+  headerSubMenuClossCallBack = null,
+  ...props
+}) => {
   const dispatch = useDispatch();
 
   const setActiveBrand = (brandId) => {
     dispatch(setActiveBrandId(brandId));
+    if (headerSubMenuClossCallBack != null) headerSubMenuClossCallBack();
 
     const { from } = {
       from: { pathname: `/brand/${brandId}` },
@@ -16,7 +22,7 @@ const HeaderBrandListing = ({ brands, ...props }) => {
 
   return (
     <>
-      <ul className="dropList active">
+      <ul style={{ overflowY: "scroll", height: "200px" }} className={ulClass}>
         {brands.map((brand, key) => {
           return (
             <li key={key}>

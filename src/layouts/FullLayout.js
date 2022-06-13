@@ -33,6 +33,7 @@ export default (props) => {
                       <Route
                         path={prop3.path}
                         component={prop3.component}
+                        name={prop3.name}
                         key={key3}
                       />
                     );
@@ -42,6 +43,7 @@ export default (props) => {
                   <Route
                     path={prop2.path}
                     component={prop2.component}
+                    name={prop2.name}
                     key={key2}
                   />
                 );
@@ -50,7 +52,12 @@ export default (props) => {
               return <Redirect from={prop.path} to={prop.pathTo} key={key} />;
             } else {
               return (
-                <Route path={prop.path} component={prop.component} key={key} />
+                <Route
+                  path={prop.path}
+                  component={prop.component}
+                  name={prop.name}
+                  key={key}
+                />
               );
             }
           })}

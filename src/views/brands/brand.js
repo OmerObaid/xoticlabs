@@ -3,12 +3,15 @@ import { useState } from "react";
 import ActiveProjects from "../../components/brand/activeProjects";
 import CompletedProjects from "../../components/brand/completedProjects";
 import DraftProjects from "../../components/brand/draftProjects";
+import { isAccountPaused } from "../../helper/accountHelper";
+import { useSelector } from "react-redux";
 
 const Brand = (props) => {
   const [searchText, setSearchText] = useState("");
   const [showActiveProjects, setShowActiveProjects] = useState(true);
   const [showCompletedProjects, setShowCompletedProjects] = useState(false);
   const [showDraftsProjects, setShowDraftsProjects] = useState(false);
+  const headerSettings = useSelector((state) => state.headerSettings);
 
   const handleActiveProjectsClick = () => {
     setShowActiveProjects(true);
@@ -71,15 +74,19 @@ const Brand = (props) => {
                 onChange={(e) => setSearchText(e.target.value)}
               />
             </div>
-            <button onClick={handleNewProjectClick}>+ New project</button>
+            {!isAccountPaused(headerSettings) && (
+              <button onClick={handleNewProjectClick}>+ New project</button>
+            )}
           </div>
           {showActiveProjects && (
             <ActiveProjects filterText={searchText} props={props} />
           )}
           {showCompletedProjects && (
-            <CompletedProjects filterText={searchText} />
+            <CompletedProjects filterText={searchText} props={props} />
           )}
-          {showDraftsProjects && <DraftProjects />}
+          {showDraftsProjects && (
+            <DraftProjects filterText={searchText} props={props} />
+          )}
         </main>
       </section>
     </>

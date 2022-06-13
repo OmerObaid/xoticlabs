@@ -2,6 +2,7 @@ import deleteIcon from "../../assets/images/brand-listing-icon/icon Delete proje
 import editIcon from "../../assets/images/brand-listing-icon/icon Edit project.png";
 import checkCircle from "../../assets/images/check circle.png";
 import duplicateProjectIcon from "../../assets/images/icon Duplicate project.png";
+import moveToActiveIcon from "../../assets/images/icon Move to active.png";
 import { FormDataHelper } from "../../jwt/_helpers/FormDataHelper";
 import { PROJECT_STATUS_UPDATE } from "../../jwt/_services/axiousURL";
 import { GeneralServices } from "../../jwt/_services/General.services";
@@ -32,6 +33,43 @@ const ActiveProjectOptionMenu = ({ projectId, updateProjects, props }) => {
     props.history.push(from);
   };
 
+  const handleDuplicateProjectClick = () => {
+    const { from } = props.location.state || {
+      from: { pathname: `/duplicateProject/${projectId}` },
+    };
+    props.history.push(from);
+  };
+
+  const handleMoveToDraftsClick = () => {
+    var helper = FormDataHelper();
+    helper.append("project_id", projectId);
+    helper.append("status", "D");
+
+    GeneralServices.postRequest(helper, PROJECT_STATUS_UPDATE).then(
+      (successResponse) => {
+        swal("Project Moved to Drafts", {
+          icon: "success",
+        });
+        updateProjects();
+      }
+    );
+  };
+
+  const handleMoveToQueueClick = () => {
+    var helper = FormDataHelper();
+    helper.append("project_id", projectId);
+    helper.append("status", "Q");
+
+    GeneralServices.postRequest(helper, PROJECT_STATUS_UPDATE).then(
+      (successResponse) => {
+        swal("Project Moved to Queue", {
+          icon: "success",
+        });
+        updateProjects();
+      }
+    );
+  };
+
   return (
     <>
       <ul className="optionMenu">
@@ -40,13 +78,21 @@ const ActiveProjectOptionMenu = ({ projectId, updateProjects, props }) => {
           <img src={checkCircle} alt="" />
           Mark as complete
         </li>
-        <li className="disabled-buttons">
+        <li onClick={handleDuplicateProjectClick}>
           <img src={duplicateProjectIcon} alt="" />
           Duplicate project
         </li>
         <li onClick={handleEditProjectClick}>
           <img src={editIcon} alt="" />
           Edit project
+        </li>
+        <li onClick={handleMoveToQueueClick}>
+          <img src={moveToActiveIcon} alt="" />
+          Move to Queue
+        </li>
+        <li onClick={handleMoveToDraftsClick}>
+          <img src={moveToActiveIcon} alt="" />
+          Move to Drafts
         </li>
         <li
           onClick={() =>

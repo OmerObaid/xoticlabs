@@ -1,25 +1,18 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import { AuthenticationService } from "../../../jwt/_services";
+import { getClientName } from "../../../helper/siteHelper";
 
 /*--------------------------------------------------------------------------------*/
 /* Import images which are need for the HEADER                                    */
 /*--------------------------------------------------------------------------------*/
-import bellIcon from "../../../assets/images/header-icons/bell.png";
-import downArrow from "../../../assets/images/header-icons/down-arrow.png";
-import projectBoardIcon from "../../../assets/images/header-icons/projectBoard icon.png";
-import brandsIcon from "../../../assets/images/header-icons/brands icon.png";
-import dummyProfileIcon from "../../../assets/images/header-icons/dummy-profile-icon.png";
-import { Link } from "react-router-dom";
-import HeaderBrandListing from "../../../components/headerBrandListing";
+
+import DesktopHeader from "./DesktopHeader";
+import MobileHeader from "./MobileHeader";
 
 export default (props) => {
-  const userName =
-    AuthenticationService.currentUserValue.first_name +
-    " " +
-    AuthenticationService.currentUserValue.last_name;
+  const userName = getClientName();
   const headerSettings = useSelector((state) => state.headerSettings);
-  const [showBrandList, setShowBrandList] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   const getActiveBrand = () => {
     var brand = headerSettings.brandList.find((brand) => {
@@ -37,73 +30,67 @@ export default (props) => {
   return (
     <>
       <header>
+        {headerSettings.accountPauseStatus == "Y" && (
+          <div
+            style={{
+              width: "100%",
+              height: "40px",
+              lineHeight: "40px",
+              backgroundColor: "#fdde6c",
+              textAlign: "center",
+            }}
+          >
+            <label style={{ color: "black", textAlign: "center" }}>
+              Your account is on Pause.
+            </label>
+          </div>
+        )}
+        {headerSettings.accountSuspendedStatus == "Y" && (
+          <div
+            style={{
+              width: "100%",
+              height: "40px",
+              lineHeight: "40px",
+              backgroundColor: "#fdde6c",
+              textAlign: "center",
+            }}
+          >
+            <label style={{ color: "black", textAlign: "center" }}>
+              Your account is Suspended.
+            </label>
+          </div>
+        )}
+        {headerSettings.accountCancelStatus == "Y" && (
+          <div
+            style={{
+              width: "100%",
+              height: "40px",
+              lineHeight: "40px",
+              backgroundColor: "#FF3131",
+              textAlign: "center",
+            }}
+          >
+            <label style={{ color: "black", textAlign: "center" }}>
+              Your account is Canceled.
+            </label>
+          </div>
+        )}
         <main className="cont">
           <div className="logo">
-            <img src={getActiveBrand().brandImage} alt="logo" />
-          </div>
-          <ul>
-            {headerSettings.brandList.length > 0 && (
-              <li
-                className="headerBrandList"
-                onClick={() => {
-                  setShowBrandList(!showBrandList);
-                }}
-              >
-                <h3>{getActiveBrand().brandName}</h3>
-                <img className="icon-img" src={downArrow} alt="down-arrow" />
-                {showBrandList && (
-                  <HeaderBrandListing
-                    brands={headerSettings.brandList}
-                    {...props}
-                  />
-                )}
-              </li>
+            {getActiveBrand().brandImage && (
+              <img src={getActiveBrand().brandImage} alt="logo" />
             )}
-
-            <li>
-              <a href="#" className="disabled-buttons">
-                <img
-                  className="icon-img"
-                  src={projectBoardIcon}
-                  alt="projectBoard"
-                />
-                <span>Project Board</span>
-              </a>
-            </li>
-            <li className="mr-a">
-              <Link to="/brands">
-                <img className="icon-img" src={brandsIcon} alt="brands" />
-                <span>Brands</span>
-              </Link>
-            </li>
-            <li>
-              <button type="button" className="disabled-buttons">
-                Outsourcer plan
-              </button>
-            </li>
-            <li>
-              <img
-                className="icon-img-bel disabled-buttons"
-                src={bellIcon}
-                alt="bell icon"
-              />
-            </li>
-            <li>
-              <img src={dummyProfileIcon} alt="profile" />
-              <strong>{userName}</strong>
-              <img src={downArrow} alt="down-arrow" />
-              <ul className="dropList">
-                <li>Action</li>
-                <li>Another Action</li>
-                <li>Action Again</li>
-              </ul>
-            </li>
-          </ul>
-          <div className="burger">
-            <div className="line l1"></div>
-            <div className="line l2"></div>
-            <div className="line l3"></div>
           </div>
+          <DesktopHeader
+            getActiveBrand={getActiveBrand}
+            userName={userName}
+            {...props}
+          />
+          <MobileHeader
+            getActiveBrand={getActiveBrand}
+            userName={userName}
+            {...props}
+          />
         </main>
       </header>
     </>
